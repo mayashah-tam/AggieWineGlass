@@ -11,7 +11,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		2105B6212D9D120C00A6E478 /* AggieWineGlass */ = {
+		7B24AAD02DA369030002C2EE /* AggieWineGlass */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = AggieWineGlass;
 			sourceTree = "<group>";
@@ -32,7 +32,7 @@
 		2105B6162D9D120C00A6E478 = {
 			isa = PBXGroup;
 			children = (
-				2105B6212D9D120C00A6E478 /* AggieWineGlass */,
+				7B24AAD02DA369030002C2EE /* AggieWineGlass */,
 				2105B6202D9D120C00A6E478 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,7 +61,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				2105B6212D9D120C00A6E478 /* AggieWineGlass */,
+				7B24AAD02DA369030002C2EE /* AggieWineGlass */,
 			);
 			name = AggieWineGlass;
 			packageProductDependencies = (
