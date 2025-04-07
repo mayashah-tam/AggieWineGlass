@@ -7,115 +7,144 @@
 
 import Foundation
 
-class WineViewModel {
-    var wines: [Wine] = []
+class WineViewModel: ObservableObject {
+    @Published var wines: [Wine] = []
     
     var uniqueCategories: Set<String> = []
     var uniqueFlavorProfiles: Set<String> = []
     var uniqueFlavorSpecifics: Set<String> = []
     var uniquePairings: Set<String> = []
     
-    // function to load the wine data from the CSV file
+    // reads in the raw data from the csv file
+    // generates lists of unique categories, flavor profiles, flavor specifics, unique pairings
     func loadWineData(filepath: String) {
-        if let data = readCSV(filepath: filepath) {
-            wines = data.map { row in
-                Wine(
-                    vivinoLink: row["Vivino Link"] as! String,
-                    nameOnMenu: row["Name (on menu)"] as! String,
-                    restaurants: row["Restaurant"] as! String,
-                    glassPrice: row["Glass Price"] as! Double,
-                    bottlePrice: row["Bottle Price"] as! Double,
-                    winery: row["Winery"] as! String,
-                    year: row["Year"] as! String,
-                    wineStyle: row["Wine Style"] as! String,
-                    region: row["Region"] as! String,
-                    grapeVarieties: row["Grape Varieties"] as! String,
-                    abv: row["ABV"] as! Double,
-                    drySweet: row["Dry/Sweet"] as! Double,
-                    tannin: row["Tannin"] as! Double,
-                    softAcidic: row["Soft/Acidic"] as! Double,
-                    flavorProfile: convertToList(row["Flavor Profile"] as? String) ,
-                    pairings: convertToList(row["Pairings"] as? String) ,
-                    rating: row["Rating"] as! Double,
-                    category: row["Category"] as! String,
-                    lightBold: row["Light/Bold"] as! Double,
-                    profileSpecifics: convertToList(row["Profile Specfics"] as? String) ,
-                    fizziness: row["Fizziness"] as! Double,
-                    country: row["Country"] as! String
-                )
-            }
-            processUniqueValues()
-        }
+        readCSV(filepath: filepath)
+        processUniqueValues()
     }
     
-    private func readCSV(filepath: String) -> [[String: Any]]? {
-        let headerTypes: [String: Any.Type] = [
-            "Vivino Link": String.self,
-            "Name (on menu)": String.self,
-            "Restaurant": String.self,
-            "Glass Price": Double.self,
-            "Bottle Price": Double.self,
-            "Winery": String.self,
-            "Year": String.self,
-            "Wine Style": String.self,
-            "Region": String.self,
-            "Grape Varieties": String.self,
-            "ABV": Double.self,
-            "Dry/Sweet": Double.self,
-            "Tannin": Double.self,
-            "Soft/Acidic": Double.self,
-            "Flavor Profile": [String].self,
-            "Pairings": [String].self,
-            "Rating": Double.self,
-            "Category": String.self,
-            "Light/Bold": Double.self,
-            "Profile Specfics": [String].self,
-            "Fizziness": Double.self,
-            "Country": String.self
-        ]
-        
+    func readCSV(filepath: String) {
         do {
             let data = try String(contentsOfFile: filepath, encoding: .utf8)
             let lines = data.components(separatedBy: "\n")
             
-            var result = [[String: Any]]()
-            let headers = lines[0].components(separatedBy: ",")
+            // gets the column headers and cleans up unnecessary characters
+            let headers = lines[0].components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: .controlCharacters) }
             
-            func convert(value: String, header: String) -> Any {
-                guard let type = headerTypes[header] else {
-                    return value
-                }
-                
-                if type == Double.self, let doubleValue = Double(value) {
-                    return doubleValue
-                } else if type == String.self {
-                    return value
-                } else if type == [String].self {
-                    return value.split(separator: ",").map { String($0).trimmingCharacters(in: .whitespaces) }
-                } else {
-                    return value
-                }
-            }
+            var tempWines: [Wine] = []
             
+            // reads in each wine row
+            // converts it to a wine object
+            // adds it to a temp list of all wines
             for line in lines.dropFirst() {
-                let values = line.components(separatedBy: ",")
+                let values = parseCSVLine(line)
+                
                 if values.count == headers.count {
                     var dict = [String: Any]()
                     for (index, header) in headers.enumerated() {
                         let value = values[index]
-                        dict[header] = convert(value: value, header: header)
+                        dict[header] = value
                     }
-                    result.append(dict)
+                    
+                    if let wine = createWine(from: dict) {
+                        tempWines.append(wine)
+                    } else {
+                        print("Failed to create wine")
+                    }
                 }
             }
-            return result
+            
+            // sets temp list of processed wines to the wine list of the model
+            // sets unique list values
+            DispatchQueue.main.async {
+                        self.wines = tempWines
+                        self.processUniqueValues()
+            }
+            
         } catch {
             print("Error reading file: \(error)")
-            return nil
         }
     }
     
-    private func convertToList(_ value: String?) -> [String] {
+    // parses the row correctly based on different "value types" that are supposed to be there for each column
+    // ensures the lists for profile specifics, flavor profiles, and pairings stay together
+    func parseCSVLine(_ line: String) -> [String] {
+        var values: [String] = []
+        var currentValue = ""
+        var insideQuotes = false
+            
+        for char in line {
+            if char == "," && !insideQuotes {
+                values.append(currentValue.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: .controlCharacters))
+                currentValue = ""
+            } else if char == "\"" {
+                insideQuotes.toggle()
+            } else {
+                currentValue.append(char)
+            }
+        }
+    
+        values.append(currentValue.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: .controlCharacters))
+            
+        return values
+    }
+    
+    // converts the parsing of the wine row into a wine object
+    func createWine(from dict: [String: Any]) -> Wine? {
+        guard let vivinoLink = dict["Vivino Link"] as? String,
+              let nameOnMenu = dict["Name (on menu)"] as? String,
+              let restaurant = dict["Restaurant"] as? String,
+              let glassPrice = Double(dict["Glass Price"] as! String),
+              let bottlePrice = Double(dict["Bottle Price"] as! String),
+              let winery = dict["Winery"] as? String,
+              let wineStyle = dict["Wine Style"] as? String,
+              let region = dict["Region"] as? String,
+              let grapeVarieties = dict["Grape Varieties"] as? String,
+              let abv = Double(dict["ABV"] as! String),
+              let drySweet = Double(dict["Dry/Sweet"] as! String),
+              let tannin = Double(dict["Tannin"] as! String),
+              let softAcidic = Double(dict["Soft/Acidic"] as! String),
+              let flavorProfileStr = dict["Flavor Profile"] as? String,
+              let pairingsStr = dict["Pairings"] as? String,
+              let rating = Double(dict["Rating"] as! String),
+              let category = dict["Category"] as? String,
+              let lightBold = Double(dict["Light/Bold"] as! String),
+              let profileSpecificsStr = dict["Profile Specifics"] as? String,
+              let fizziness = Double(dict["Fizziness"] as! String),
+              let country = dict["Country"] as? String else {
+            print("Missing or invalid fields in dictionary")
+            return nil
+        }
+
+        let year = dict["Year"] as? String ?? ""
+
+        return Wine(
+            vivinoLink: vivinoLink,
+            nameOnMenu: nameOnMenu,
+            restaurant: restaurant,
+            glassPrice: glassPrice,
+            bottlePrice: bottlePrice,
+            winery: winery,
+            year: year,
+            wineStyle: wineStyle,
+            region: region,
+            grapeVarieties: grapeVarieties,
+            abv: abv,
+            drySweet: drySweet,
+            tannin: tannin,
+            softAcidic: softAcidic,
+            flavorProfile: convertToList(flavorProfileStr),
+            pairings: convertToList(pairingsStr),
+            rating: rating,
+            category: category,
+            lightBold: lightBold,
+            profileSpecifics: convertToList(profileSpecificsStr),
+            fizziness: fizziness,
+            country: country
+        )
+    }
+    
+    // converts the columns with "lists" (profile specifics, flavor profiles, pairings) into a true list
+    func convertToList(_ value: String?) -> [String] {
         guard let value = value, !value.isEmpty else {
             return []
         }
@@ -123,8 +152,10 @@ class WineViewModel {
         return value.trimmingCharacters(in: .whitespacesAndNewlines)
                     .trimmingCharacters(in: CharacterSet(charactersIn: "'"))
                     .components(separatedBy: ",")
+                    .map { $0.trimmingCharacters(in: .whitespaces) }
     }
     
+    // creates the unique lists of different values for flavor columns (profiles, specifics, and pairings) as well as categories
     private func processUniqueValues() {
         let flavorProfiles = wines.map { $0.flavorProfile }.flatMap { $0 }
         let pairings = wines.map { $0.pairings }.flatMap { $0 }
