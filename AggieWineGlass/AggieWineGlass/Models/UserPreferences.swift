@@ -7,7 +7,7 @@
 
 import Foundation
 
-// creates the user preferences model class to keep track of all user information
+// creates the user preferences model class to keep track of all users
 class UserPreferences: Codable {
     static let shared = UserPreferences()  // singleton instance
 
@@ -16,10 +16,11 @@ class UserPreferences: Codable {
     var softAcidityScale: Double
     var lightBoldScale: Double
     var fizzinessScale: Double
-    var flavorProfiles: [String]
-    var flavorSpecifics: [String]
+    var categories: Set<String>
+    var flavorProfiles: Set<String>
+    var flavorSpecifics: Set<String>
     var isPairing: Bool
-    var pairings: [String]
+    var pairings: Set<String>
     
     // initialize with default values
     private init(drySweetScale: Double = 3.0,
@@ -27,16 +28,18 @@ class UserPreferences: Codable {
                  softAcidityScale: Double = 3.0,
                  lightBoldScale: Double = 3.0,
                  fizzinessScale: Double = 3.0,
-                 flavorProfiles: [String] = [],
-                 flavorSpecifics: [String] = [],
+                 categories: Set<String> = [],
+                 flavorProfiles: Set<String> = [],
+                 flavorSpecifics: Set<String> = [],
                  isPairing: Bool = false,
-                 pairings: [String] = []) {
+                 pairings: Set<String> = []) {
         
         self.drySweetScale = drySweetScale
         self.tanninScale = tanninScale
         self.softAcidityScale = softAcidityScale
         self.lightBoldScale = lightBoldScale
         self.fizzinessScale = fizzinessScale
+        self.categories = categories
         self.flavorProfiles = flavorProfiles
         self.flavorSpecifics = flavorSpecifics
         self.isPairing = isPairing
