@@ -9,14 +9,16 @@ import SwiftUI
 
 struct WineView: View {
     @StateObject var viewModel = WineViewModel()
+    
+    @ObservedObject var wineDataInfo = WineDataInfo.shared
 
     var body: some View {
         VStack {
-            if viewModel.wines.isEmpty {
+            if wineDataInfo.wines.isEmpty {
                 Text("No wines available")
                     .padding()
             } else {
-                List(viewModel.wines, id: \.nameOnMenu) { wine in
+                List(wineDataInfo.wines, id: \.nameOnMenu) { wine in
                     VStack(alignment: .leading) {
                         Text("Name on Menu: \(wine.nameOnMenu)")
                             .font(.headline)
@@ -51,7 +53,7 @@ struct WineView: View {
                 DispatchQueue.global(qos: .userInitiated).async {
                     viewModel.loadWineData(filepath: filePath)
                     DispatchQueue.main.async {
-                        print("Wines loaded: \(viewModel.wines.count)")
+                        print("Wines loaded: \(wineDataInfo.wines.count)")
                     }
                 }
             } else {

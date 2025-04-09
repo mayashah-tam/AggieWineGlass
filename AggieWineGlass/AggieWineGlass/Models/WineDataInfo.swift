@@ -15,17 +15,20 @@ class WineDataInfo: ObservableObject {
     @Published var uniquePairings: Set<String> = []
     @Published var uniqueFlavorSpecifics: Set<String> = []
     @Published var uniqueRegions: Set<String> = []
+    @Published var wines: [Wine] = []
     
     private init(uniqueCategories: Set<String> = [],
                  uniqueFlavorProfiles: Set<String> = [],
                  uniqueFlavorSpecifics: Set<String> = [],
                  uniquePairings: Set<String> = [],
-                 uniqueRegions: Set<String> = []) {
+                 uniqueRegions: Set<String> = [],
+                 wines: [Wine] = []) {
         
         self.uniqueCategories = uniqueCategories
         self.uniqueFlavorProfiles = uniqueFlavorProfiles
         self.uniqueFlavorSpecifics = uniqueFlavorSpecifics
         self.uniquePairings = uniquePairings
         self.uniqueRegions = uniqueRegions
+        self.wines = wines
     }
 }

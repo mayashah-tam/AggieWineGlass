@@ -8,7 +8,6 @@
 import Foundation
 
 class WineViewModel: ObservableObject {
-    @Published var wines: [Wine] = []
     @Published var wineDataInfo = WineDataInfo.shared
     
     // reads in the raw data from the csv file
@@ -51,8 +50,9 @@ class WineViewModel: ObservableObject {
             // sets temp list of processed wines to the wine list of the model
             // sets unique list values
             DispatchQueue.main.async {
-                        self.wines = tempWines
-                        self.processUniqueValues()
+                self.wineDataInfo.wines = tempWines
+                print(self.wineDataInfo.wines)
+                self.processUniqueValues()
             }
             
         } catch {
@@ -178,15 +178,15 @@ class WineViewModel: ObservableObject {
     
     // creates the unique lists of different values for flavor columns (profiles, specifics, and pairings) as well as categories
     private func processUniqueValues() {
-        let flavorProfiles = wines.map { $0.flavorProfile }.flatMap { $0 }
-        let pairings = wines.map { $0.pairings }.flatMap { $0 }
-        let profileSpecifics = wines.map { $0.profileSpecifics }.flatMap { $0 }
+        let flavorProfiles = wineDataInfo.wines.map { $0.flavorProfile }.flatMap { $0 }
+        let pairings = wineDataInfo.wines.map { $0.pairings }.flatMap { $0 }
+        let profileSpecifics = wineDataInfo.wines.map { $0.profileSpecifics }.flatMap { $0 }
                 
-        wineDataInfo.uniqueCategories = Set(wines.map { $0.category })
+        wineDataInfo.uniqueCategories = Set(wineDataInfo.wines.map { $0.category })
         wineDataInfo.uniqueFlavorProfiles = Set(flavorProfiles)
         wineDataInfo.uniquePairings = Set(pairings)
         wineDataInfo.uniqueFlavorSpecifics = Set(profileSpecifics)
-        wineDataInfo.uniqueRegions = Set(wines.map {$0.region})
+        wineDataInfo.uniqueRegions = Set(wineDataInfo.wines.map {$0.region})
     }
     
     private func cleanString(_ input: String) -> String {
