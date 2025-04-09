@@ -45,6 +45,13 @@ struct AggieWineGlassApp: App {
                             .foregroundColor(.blue)
                             .padding()
                     }
+                    
+                    NavigationLink(destination: FlavorProfileSelectionView()) {
+                        Text("Go to Flavor Profile Selection View")
+                            .font(.headline)
+                            .foregroundColor(.blue)
+                            .padding()
+                    }
                 }
                 .navigationTitle("Main Menu")
             }
