@@ -9,17 +9,12 @@ import Foundation
 
 class WineViewModel: ObservableObject {
     @Published var wines: [Wine] = []
-    
-    var uniqueCategories: Set<String> = []
-    var uniqueFlavorProfiles: Set<String> = []
-    var uniqueFlavorSpecifics: Set<String> = []
-    var uniquePairings: Set<String> = []
+    @Published var wineDataInfo = WineDataInfo.shared
     
     // reads in the raw data from the csv file
     // generates lists of unique categories, flavor profiles, flavor specifics, unique pairings
     func loadWineData(filepath: String) {
         readCSV(filepath: filepath)
-        processUniqueValues()
     }
     
     func readCSV(filepath: String) {
@@ -187,10 +182,10 @@ class WineViewModel: ObservableObject {
         let pairings = wines.map { $0.pairings }.flatMap { $0 }
         let profileSpecifics = wines.map { $0.profileSpecifics }.flatMap { $0 }
                 
-        uniqueCategories = Set(wines.map { $0.category })
-        uniqueFlavorProfiles = Set(flavorProfiles)
-        uniquePairings = Set(pairings)
-        uniqueFlavorSpecifics = Set(profileSpecifics)
+        wineDataInfo.uniqueCategories = Set(wines.map { $0.category })
+        wineDataInfo.uniqueFlavorProfiles = Set(flavorProfiles)
+        wineDataInfo.uniquePairings = Set(pairings)
+        wineDataInfo.uniqueFlavorSpecifics = Set(profileSpecifics)
     }
     
     private func cleanString(_ input: String) -> String {
