@@ -42,6 +42,8 @@ struct WineView: View {
                         Text("Country: \(wine.country)")
                         Text("Glass Price: $\(wine.glassPrice, specifier: "%.2f")")
                         Text("Bottle Price: $\(wine.bottlePrice, specifier: "%.2f")")
+                        Text("ID: \(wine.id)")
+                        Text("Region Class: \(wine.regionClass)")
                     }
                     .padding()
                 }

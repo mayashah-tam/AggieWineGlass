@@ -105,7 +105,9 @@ class WineViewModel: ObservableObject {
               let lightBold = Double(dict["Light/Bold"] as! String),
               let profileSpecificsStr = dict["Profile Specifics"] as? String,
               let fizziness = Double(dict["Fizziness"] as! String),
-              let country = dict["Country"] as? String else {
+              let country = dict["Country"] as? String ,
+              let id = dict["Wine ID"] as? String,
+              let regionClass = dict["Region Class"] as? String else {
             print("Missing or invalid fields in dictionary")
             return nil
         }
@@ -134,7 +136,9 @@ class WineViewModel: ObservableObject {
             lightBold: lightBold,
             profileSpecifics: convertToList(profileSpecificsStr),
             fizziness: fizziness,
-            country: country
+            country: country,
+            id: id,
+            regionClass: regionClass
         )
     }
     
@@ -186,7 +190,7 @@ class WineViewModel: ObservableObject {
         wineDataInfo.uniqueFlavorProfiles = Set(flavorProfiles)
         wineDataInfo.uniquePairings = Set(pairings)
         wineDataInfo.uniqueFlavorSpecifics = Set(profileSpecifics)
-        wineDataInfo.uniqueRegions = Set(wineDataInfo.wines.map {$0.region})
+        wineDataInfo.uniqueRegionClasses = Set(wineDataInfo.wines.map {$0.regionClass})
     }
     
     private func cleanString(_ input: String) -> String {
