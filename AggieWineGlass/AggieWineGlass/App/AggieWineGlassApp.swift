@@ -59,6 +59,13 @@ struct AggieWineGlassApp: App {
                             .foregroundColor(.blue)
                             .padding()
                     }
+                    
+                    NavigationLink(destination: RegionsSelectionView()) {
+                        Text("Go to Regions Selection View")
+                            .font(.headline)
+                            .foregroundColor(.blue)
+                            .padding()
+                    }
                 }
                 .navigationTitle("Main Menu")
             }
