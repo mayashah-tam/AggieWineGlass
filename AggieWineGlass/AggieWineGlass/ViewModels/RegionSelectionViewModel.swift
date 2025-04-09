@@ -13,21 +13,21 @@ class RegionSelectionViewModel: ObservableObject {
 
     // function to toggle selection of regions
     func toggleRegionSelection(region: String) {
-        if preferences.regions.contains(region) {
-            preferences.regions.remove(region)
+        if preferences.regionClasses.contains(region) {
+            preferences.regionClasses.remove(region)
         } else {
-            preferences.regions.insert(region)
+            preferences.regionClasses.insert(region)
         }
-        print(preferences.regions)
+        print(preferences.regionClasses)
     }
 
     func selectAllRegions() {
-        preferences.regions = Set(WineDataInfo.shared.uniqueRegions)
-        print(preferences.regions)
+        preferences.regionClasses = Set(WineDataInfo.shared.uniqueRegionClasses)
+        print(preferences.regionClasses)
     }
     
     func clearAllRegions() {
-        preferences.regions.removeAll()
-        print(preferences.regions)
+        preferences.regionClasses.removeAll()
+        print(preferences.regionClasses)
     }
 }

@@ -21,20 +21,20 @@ struct RegionsSelectionView: View {
                 .padding()
 
             // Only show categories if they are loaded
-            if wineDataInfo.uniqueRegions.isEmpty {
+            if wineDataInfo.uniqueRegionClasses.isEmpty {
                 Text("Loading regions...")
                     .padding()
             } else {
                 // Display the unique categories from the singleton WineDataInfo shared instance
                 // this needs to be mapped similar to how profile flavors are mapped to profile specifics -- there are just too many and too specific to do like this -- need bigger categories
-                List(wineDataInfo.uniqueRegions.sorted(), id: \.self) { region in
+                List(wineDataInfo.uniqueRegionClasses.sorted(), id: \.self) { region in
                     HStack {
                         // Custom checkbox-like toggle using a Button and Image
                         Button(action: {
                             viewModel.toggleRegionSelection(region: region)
                         }) {
                             HStack {
-                                Image(systemName: viewModel.preferences.regions.contains(region) ? "checkmark.square" : "square")
+                                Image(systemName: viewModel.preferences.regionClasses.contains(region) ? "checkmark.square" : "square")
                                     .foregroundColor(.blue) // Change the color as needed
                                 Text(region)
                                     .foregroundColor(.primary)
@@ -66,7 +66,7 @@ struct RegionsSelectionView: View {
         .padding()
         .onAppear {
             // Print the uniqueCategories when the view appears
-            print("Unique Regions: \(wineDataInfo.uniqueRegions)")
+            print("Unique Regions: \(wineDataInfo.uniqueRegionClasses)")
         }
     }
 }

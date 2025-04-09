@@ -21,7 +21,7 @@ class UserPreferences: Codable {
     var flavorSpecifics: Set<String>
     var isPairing: Bool
     var pairings: Set<String>
-    var regions: Set<String>
+    var regionClasses: Set<String>
     var highPersonalization: Bool
     
     // initialize with default values
@@ -35,7 +35,7 @@ class UserPreferences: Codable {
                  flavorSpecifics: Set<String> = [],
                  isPairing: Bool = false,
                  pairings: Set<String> = [],
-                 regions: Set<String> = [],
+                 regionClasses: Set<String> = [],
                  highPersonalization: Bool = false) {
         
         self.drySweetScale = drySweetScale
@@ -48,7 +48,7 @@ class UserPreferences: Codable {
         self.flavorSpecifics = flavorSpecifics
         self.isPairing = isPairing
         self.pairings = pairings
-        self.regions = regions
+        self.regionClasses = regionClasses
         self.highPersonalization = highPersonalization
     }
     
