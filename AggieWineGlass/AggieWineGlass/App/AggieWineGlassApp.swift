@@ -23,7 +23,35 @@ import SwiftUI
 struct AggieWineGlassApp: App {
     var body: some Scene {
         WindowGroup {
-            SliderScalesView()
+            NavigationView {
+                VStack {
+                    NavigationLink(destination: WineView()) {
+                        Text("Go to Wine View")
+                            .font(.headline)
+                            .foregroundColor(.blue)
+                            .padding()
+                    }
+                    
+                    NavigationLink(destination: SliderScalesView()) {
+                        Text("Go to Slider Scales View")
+                            .font(.headline)
+                            .foregroundColor(.blue)
+                            .padding()
+                    }
+                    
+                    NavigationLink(destination: CategorySelectionView()) {
+                        Text("Go to Category Selection View")
+                            .font(.headline)
+                            .foregroundColor(.blue)
+                            .padding()
+                    }
+                }
+                .navigationTitle("Main Menu")
+            }
         }
     }
 }
+
+
+
+
