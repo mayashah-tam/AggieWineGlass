@@ -55,7 +55,6 @@ struct PairingsSelectionView: View {
                         .padding()
                         .foregroundColor(.gray) // Optional: Make the loading text a different color
                 } else {
-                    // note that this is currently loading all the pairings ... we need to map this based on the categories of wines they selected (i.e. don't display desert pairing if they didn't select desert wines as a category
                     List(viewModel.uniqueFilteredPairings.sorted(), id: \.self) { pairing in
                         HStack {
                             // Custom checkbox-like toggle using a Button and Image

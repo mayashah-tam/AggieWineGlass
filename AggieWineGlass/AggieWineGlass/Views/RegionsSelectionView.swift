@@ -26,7 +26,6 @@ struct RegionsSelectionView: View {
                     .padding()
             } else {
                 // Display the unique categories from the singleton WineDataInfo shared instance
-                // this needs to be mapped similar to how profile flavors are mapped to profile specifics -- there are just too many and too specific to do like this -- need bigger categories
                 List(wineDataInfo.uniqueRegionClasses.sorted(), id: \.self) { region in
                     HStack {
                         // Custom checkbox-like toggle using a Button and Image
