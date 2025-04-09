@@ -186,6 +186,7 @@ class WineViewModel: ObservableObject {
         wineDataInfo.uniqueFlavorProfiles = Set(flavorProfiles)
         wineDataInfo.uniquePairings = Set(pairings)
         wineDataInfo.uniqueFlavorSpecifics = Set(profileSpecifics)
+        wineDataInfo.uniqueRegions = Set(wines.map {$0.region})
     }
     
     private func cleanString(_ input: String) -> String {
