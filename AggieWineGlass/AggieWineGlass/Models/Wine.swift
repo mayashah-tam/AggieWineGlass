@@ -30,8 +30,10 @@ class Wine {
     var profileSpecifics: [String]
     var fizziness: Double
     var country: String
+    var id: String
+    var regionClass: String
     
-    init(vivinoLink: String, nameOnMenu: String, restaurant: String, glassPrice: Double, bottlePrice: Double, winery: String, year: String, wineStyle: String, region: String, grapeVarieties: String, abv: Double, drySweet: Double, tannin: Double, softAcidic: Double, flavorProfile: [String], pairings: [String], rating: Double, category: String, lightBold: Double, profileSpecifics: [String], fizziness: Double, country: String) {
+    init(vivinoLink: String, nameOnMenu: String, restaurant: String, glassPrice: Double, bottlePrice: Double, winery: String, year: String, wineStyle: String, region: String, grapeVarieties: String, abv: Double, drySweet: Double, tannin: Double, softAcidic: Double, flavorProfile: [String], pairings: [String], rating: Double, category: String, lightBold: Double, profileSpecifics: [String], fizziness: Double, country: String, id: String, regionClass: String) {
         self.vivinoLink = vivinoLink
         self.nameOnMenu = nameOnMenu
         self.restaurant = restaurant
@@ -54,6 +56,8 @@ class Wine {
         self.profileSpecifics = profileSpecifics
         self.fizziness = fizziness
         self.country = country
+        self.id = id
+        self.regionClass = regionClass
     }
 }
 
@@ -82,6 +86,8 @@ extension Wine: CustomStringConvertible {
         Profile Specifics: \(profileSpecifics.joined(separator: ", "))
         Fizziness: \(fizziness)
         Country: \(country)
+        ID: \(id)
+        Region Class: \(regionClass)
         """
     }
 }
