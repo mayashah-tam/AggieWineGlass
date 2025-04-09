@@ -21,6 +21,7 @@ class UserPreferences: Codable {
     var flavorSpecifics: Set<String>
     var isPairing: Bool
     var pairings: Set<String>
+    var regions: Set<String>
     
     // initialize with default values
     private init(drySweetScale: Double = 3.0,
@@ -32,7 +33,8 @@ class UserPreferences: Codable {
                  flavorProfiles: Set<String> = [],
                  flavorSpecifics: Set<String> = [],
                  isPairing: Bool = false,
-                 pairings: Set<String> = []) {
+                 pairings: Set<String> = [],
+                 regions: Set<String> = []) {
         
         self.drySweetScale = drySweetScale
         self.tanninScale = tanninScale
@@ -44,6 +46,7 @@ class UserPreferences: Codable {
         self.flavorSpecifics = flavorSpecifics
         self.isPairing = isPairing
         self.pairings = pairings
+        self.regions = regions
     }
     
 }
