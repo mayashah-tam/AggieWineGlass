@@ -5,13 +5,15 @@
 //  Created by Maya Shah on 4/8/25.
 //
 
-class WineDataInfo: Codable {
-    static let shared = WineDataInfo() // singleton instance
-    
-    var uniqueCategories: Set<String>
-    var uniqueFlavorProfiles: Set<String>
-    var uniqueFlavorSpecifics: Set<String>
-    var uniquePairings: Set<String>
+import Combine
+
+class WineDataInfo: ObservableObject {
+    static let shared = WineDataInfo()
+
+    @Published var uniqueCategories: Set<String> = []
+    @Published var uniqueFlavorProfiles: Set<String> = []
+    @Published var uniquePairings: Set<String> = []
+    @Published var uniqueFlavorSpecifics: Set<String> = []
     
     private init(uniqueCategories: Set<String> = [],
                  uniqueFlavorProfiles: Set<String> = [],
