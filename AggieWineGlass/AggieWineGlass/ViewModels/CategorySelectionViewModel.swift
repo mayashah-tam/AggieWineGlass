@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-class CategorySelectionView: ObservableObject {
+class CategorySelectionViewModel: ObservableObject {
     @Published var preferences = UserPreferences.shared
 
     // function to toggle selection of categories
