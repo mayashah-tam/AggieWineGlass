@@ -149,11 +149,37 @@ class WineViewModel: ObservableObject {
             return []
         }
         
-        return value.trimmingCharacters(in: .whitespacesAndNewlines)
-                    .trimmingCharacters(in: CharacterSet(charactersIn: "'"))
-                    .components(separatedBy: ",")
-                    .map { $0.trimmingCharacters(in: .whitespaces) }
+        var result = [String]()
+        var currentString = ""
+        var insideParentheses = false
+
+        for char in value {
+            if char == "," && !insideParentheses {
+                // when we hit a comma outside of parentheses, add the current string to the result
+                result.append(cleanString(currentString))
+                currentString = ""
+            } else if char == "(" {
+                // mark the start of parentheses
+                insideParentheses = true
+                currentString.append(char)
+            } else if char == ")" {
+                // mark the end of parentheses
+                insideParentheses = false
+                currentString.append(char)
+            } else {
+                // otherwise, add the character to the current string
+                currentString.append(char)
+            }
+        }
+
+        // append the last part
+        if !currentString.isEmpty {
+            result.append(cleanString(currentString))
+        }
+        
+        return result
     }
+
     
     // creates the unique lists of different values for flavor columns (profiles, specifics, and pairings) as well as categories
     private func processUniqueValues() {
@@ -166,4 +192,12 @@ class WineViewModel: ObservableObject {
         uniquePairings = Set(pairings)
         uniqueFlavorSpecifics = Set(profileSpecifics)
     }
+    
+    private func cleanString(_ input: String) -> String {
+        // remove unwanted characters like quotes and brackets, without using regular expressions
+        let cleaned = input.replacingOccurrences(of: "'", with: "")         .replacingOccurrences(of: "[", with: "")
+            .replacingOccurrences(of: "]", with: "")
+        return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
 }
