@@ -28,6 +28,7 @@ struct PairingsSelectionView: View {
                     Button(action: {
                         // User clicked Yes, show the categories
                         viewModel.turnOnPairingSelection()
+                        viewModel.findPairingsBasedOnWineCategories()
                         showPairings = true
                     }) {
                         Text("Yes")
@@ -49,13 +50,13 @@ struct PairingsSelectionView: View {
             // Only show pairings if showPairings is true
             if showPairings {
                 // Only show categories if they are loaded
-                if wineDataInfo.uniquePairings.isEmpty {
+                if viewModel.uniqueFilteredPairings.isEmpty {
                     Text("Loading pairings...")
                         .padding()
                         .foregroundColor(.gray) // Optional: Make the loading text a different color
                 } else {
                     // note that this is currently loading all the pairings ... we need to map this based on the categories of wines they selected (i.e. don't display desert pairing if they didn't select desert wines as a category
-                    List(wineDataInfo.uniquePairings.sorted(), id: \.self) { pairing in
+                    List(viewModel.uniqueFilteredPairings.sorted(), id: \.self) { pairing in
                         HStack {
                             // Custom checkbox-like toggle using a Button and Image
                             Button(action: {

@@ -10,10 +10,18 @@ import Combine
 
 class PairingSelectionViewModel: ObservableObject {
     @Published var preferences = UserPreferences.shared
+    @Published var wineDataInfo = WineDataInfo.shared
+    @Published var uniqueFilteredPairings: Set<String> = []
     
     func turnOnPairingSelection() {
         preferences.isPairing = true
         print(preferences.isPairing)
+    }
+    
+    func findPairingsBasedOnWineCategories() {
+        let filteredWines = wineDataInfo.wines.filter { preferences.categories.contains($0.category) }
+        let filteredPairings = filteredWines.map { $0.pairings }.flatMap { $0 }
+        uniqueFilteredPairings = Set(filteredPairings)
     }
 
     // function to toggle selection of pairings
