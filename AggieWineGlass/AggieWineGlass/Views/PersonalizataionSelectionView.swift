@@ -7,34 +7,55 @@
 
 import SwiftUI
 
-struct PersonalizataionSelectionView: View {
-    @StateObject var viewModel = PersonalizationSelectionViewModel()
+struct PersonalizationSelectionView: View {
+    @EnvironmentObject var preferences: UserPreferences
+    @EnvironmentObject var wineDataInfo: WineDataInfo
+
+    @StateObject private var viewModel: PersonalizationSelectionViewModel
+    @State private var showWineView = false
+
+    init(preferences: UserPreferences) {
+        _viewModel = StateObject(wrappedValue:
+            PersonalizationSelectionViewModel(
+                preferences: preferences
+            )
+        )
+    }
 
     var body: some View {
         VStack {
             Text("Do you want more or less personalization?")
                 .font(.headline)
                 .padding()
-            
+
             HStack {
-                Button(action: {
+                Button("More") {
                     viewModel.turnOnMorePersonalization()
-                }) {
-                    Text("More")
-                        .foregroundColor(.blue)
-                        .padding()
                 }
-                
-                Button(action: {
+                .foregroundColor(.blue)
+                .padding()
+
+                Button("Less") {
                     viewModel.turnOffMorePersonalization()
-                }) {
-                    Text("Less")
-                        .foregroundColor(.red)
-                        .padding()
                 }
+                .foregroundColor(.red)
+                .padding()
             }
+
+            Button("Next") {
+                showWineView = true
+            }
+            .font(.title2)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.accentColor)
+            .foregroundColor(.white)
+            .cornerRadius(10)
+            .padding(.top)
         }
         .padding()
+        .navigationDestination(isPresented: $showWineView) {
+            WineView()
+        }
     }
 }
-

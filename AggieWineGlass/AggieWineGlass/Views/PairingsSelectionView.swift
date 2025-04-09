@@ -8,13 +8,21 @@
 import SwiftUI
 
 struct PairingsSelectionView: View {
-    @StateObject var viewModel = PairingSelectionViewModel()
+    @EnvironmentObject var preferences: UserPreferences
+    @EnvironmentObject var wineDataInfo: WineDataInfo
 
-    // Observing the shared wine data info object to check when categories are ready
-    @ObservedObject var wineDataInfo = WineDataInfo.shared
-    
-    
-    @State private var showPairings = false  // State to track if categories should be shown
+    @StateObject private var viewModel: PairingSelectionViewModel
+    @State private var showPairings = false
+    @State private var showFlavorProfileSelection = false
+
+    init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
+        _viewModel = StateObject(wrappedValue:
+            PairingSelectionViewModel(
+                preferences: preferences,
+                wineDataInfo: wineDataInfo
+            )
+        )
+    }
 
     var body: some View {
         VStack {
@@ -22,11 +30,9 @@ struct PairingsSelectionView: View {
                 .font(.headline)
                 .padding()
 
-            // Display yes/no buttons to allow the user to choose if categories should be shown
             if !showPairings {
                 HStack {
                     Button(action: {
-                        // User clicked Yes, show the categories
                         viewModel.turnOnPairingSelection()
                         viewModel.findPairingsBasedOnWineCategories()
                         showPairings = true
@@ -37,7 +43,6 @@ struct PairingsSelectionView: View {
                     }
 
                     Button(action: {
-                        // User clicked No, do not show the categories
                         showPairings = false
                     }) {
                         Text("No")
@@ -47,56 +52,60 @@ struct PairingsSelectionView: View {
                 }
             }
 
-            // Only show pairings if showPairings is true
             if showPairings {
-                // Only show categories if they are loaded
                 if viewModel.uniqueFilteredPairings.isEmpty {
                     Text("Loading pairings...")
                         .padding()
-                        .foregroundColor(.gray) // Optional: Make the loading text a different color
+                        .foregroundColor(.gray)
                 } else {
                     List(viewModel.uniqueFilteredPairings.sorted(), id: \.self) { pairing in
-                        HStack {
-                            // Custom checkbox-like toggle using a Button and Image
-                            Button(action: {
-                                viewModel.togglePairingSelection(pairing: pairing)
-                            }) {
-                                HStack {
-                                    Image(systemName: viewModel.preferences.pairings.contains(pairing) ? "checkmark.square" : "square")
-                                        .foregroundColor(.blue) // Change the color as needed
-                                    Text(pairing)
-                                        .foregroundColor(.primary)
-                                }
+                        Button(action: {
+                            viewModel.togglePairingSelection(pairing: pairing)
+                        }) {
+                            HStack {
+                                Image(systemName: viewModel.preferences.pairings.contains(pairing) ? "checkmark.square" : "square")
+                                    .foregroundColor(.blue)
+                                Text(pairing)
+                                    .foregroundColor(.primary)
                             }
-                            .buttonStyle(PlainButtonStyle()) // Ensures no default button style interferes
                         }
+                        .buttonStyle(PlainButtonStyle())
                     }
 
-                    // Button to select all categories
-                    Button(action: {
+                    Button("Select All Pairings") {
                         viewModel.selectAllPairings()
-                    }) {
-                        Text("Select All Pairings")
-                            .foregroundColor(.blue)
-                            .padding()
                     }
+                    .foregroundColor(.blue)
+                    .padding()
 
-                    // Add a button to clear all selections if desired
-                    Button(action: {
+                    Button("Clear Pairings") {
                         viewModel.clearAllPairings()
-                    }) {
-                        Text("Clear Pairings")
-                            .foregroundColor(.red)
-                            .padding()
                     }
+                    .foregroundColor(.red)
+                    .padding()
                 }
             }
+
+            Button("Next") {
+                showFlavorProfileSelection = true
+            }
+            .font(.title2)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.accentColor)
+            .foregroundColor(.white)
+            .cornerRadius(10)
+            .padding(.top)
         }
         .padding()
         .onAppear {
-            // Print the uniqueCategories when the view appears
             print("Unique Pairings: \(wineDataInfo.uniquePairings)")
+        }
+        .navigationDestination(isPresented: $showFlavorProfileSelection) {
+            FlavorProfileSelectionView(
+                preferences: preferences,
+                wineDataInfo: wineDataInfo
+            )
         }
     }
 }
-

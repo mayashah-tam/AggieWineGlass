@@ -9,7 +9,11 @@ import Foundation
 import Combine
 
 class PersonalizationSelectionViewModel: ObservableObject {
-    @Published var preferences = UserPreferences.shared
+    var preferences: UserPreferences
+    
+    init(preferences: UserPreferences) {
+        self.preferences = preferences
+    }
     
     func turnOnMorePersonalization() {
         preferences.highPersonalization = true

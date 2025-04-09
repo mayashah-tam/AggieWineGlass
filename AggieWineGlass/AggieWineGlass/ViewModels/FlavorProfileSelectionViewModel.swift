@@ -8,8 +8,14 @@
 import Foundation
 import Combine
 
-class FlavorProfileSelectionModel: ObservableObject {
-    @Published var preferences = UserPreferences.shared
+class FlavorProfileSelectionViewModel: ObservableObject {
+    var preferences: UserPreferences
+    var wineDataInfo: WineDataInfo
+    
+    init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
+        self.wineDataInfo = wineDataInfo
+        self.preferences = preferences
+    }
 
     // function to toggle selection of flavor profiles
     func toggleFlavorProfileSelection(flavorProfile: String) {
@@ -22,7 +28,7 @@ class FlavorProfileSelectionModel: ObservableObject {
     }
 
     func selectAllFlavorProfiles() {
-        preferences.flavorProfiles = Set(WineDataInfo.shared.uniqueFlavorProfiles)
+        preferences.flavorProfiles = Set(wineDataInfo.uniqueFlavorProfiles)
         print(preferences.flavorProfiles)
     }
     

@@ -8,9 +8,8 @@
 import SwiftUI
 
 struct WineView: View {
-    @StateObject var viewModel = WineViewModel()
-    
-    @ObservedObject var wineDataInfo = WineDataInfo.shared
+    @EnvironmentObject var preferences: UserPreferences
+    @EnvironmentObject var wineDataInfo: WineDataInfo
 
     var body: some View {
         VStack {
@@ -47,19 +46,6 @@ struct WineView: View {
                     }
                     .padding()
                 }
-            }
-        }
-        .onAppear {
-            if let filePath = Bundle.main.path(forResource: "WineListData", ofType: "csv") {
-                print("File path: \(filePath)")
-                DispatchQueue.global(qos: .userInitiated).async {
-                    viewModel.loadWineData(filepath: filePath)
-                    DispatchQueue.main.async {
-                        print("Wines loaded: \(wineDataInfo.wines.count)")
-                    }
-                }
-            } else {
-                print("File path is nil!")
             }
         }
     }

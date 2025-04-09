@@ -9,9 +9,14 @@ import Foundation
 import Combine
 
 class CategorySelectionViewModel: ObservableObject {
-    @Published var preferences = UserPreferences.shared
+    var preferences: UserPreferences
+    var wineDataInfo: WineDataInfo
+    
+    init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
+        self.wineDataInfo = wineDataInfo
+        self.preferences = preferences
+    }
 
-    // function to toggle selection of categories
     func toggleCategorySelection(category: String) {
         if preferences.categories.contains(category) {
             preferences.categories.remove(category)
@@ -22,7 +27,7 @@ class CategorySelectionViewModel: ObservableObject {
     }
 
     func selectAllCategories() {
-        preferences.categories = Set(WineDataInfo.shared.uniqueCategories)
+        preferences.categories = Set(wineDataInfo.uniqueCategories)
         print(preferences.categories)
     }
     
@@ -31,4 +36,3 @@ class CategorySelectionViewModel: ObservableObject {
         print(preferences.categories)
     }
 }
-

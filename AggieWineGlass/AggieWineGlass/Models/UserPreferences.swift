@@ -6,37 +6,34 @@
 //
 
 import Foundation
+import Combine
 
-// creates the user preferences model class to keep track of all users
-class UserPreferences: Codable {
-    static let shared = UserPreferences()  // singleton instance
+class UserPreferences: ObservableObject {
+    @Published var drySweetScale: Double
+    @Published var tanninScale: Double
+    @Published var softAcidityScale: Double
+    @Published var lightBoldScale: Double
+    @Published var fizzinessScale: Double
+    @Published var categories: Set<String>
+    @Published var flavorProfiles: Set<String>
+    @Published var flavorSpecifics: Set<String>
+    @Published var isPairing: Bool
+    @Published var pairings: Set<String>
+    @Published var regionClasses: Set<String>
+    @Published var highPersonalization: Bool
 
-    var drySweetScale: Double
-    var tanninScale: Double
-    var softAcidityScale: Double
-    var lightBoldScale: Double
-    var fizzinessScale: Double
-    var categories: Set<String>
-    var flavorProfiles: Set<String>
-    var flavorSpecifics: Set<String>
-    var isPairing: Bool
-    var pairings: Set<String>
-    var regionClasses: Set<String>
-    var highPersonalization: Bool
-    
-    // initialize with default values
-    private init(drySweetScale: Double = 3.0,
-                 tanninScale: Double = 3.0,
-                 softAcidityScale: Double = 3.0,
-                 lightBoldScale: Double = 3.0,
-                 fizzinessScale: Double = 3.0,
-                 categories: Set<String> = [],
-                 flavorProfiles: Set<String> = [],
-                 flavorSpecifics: Set<String> = [],
-                 isPairing: Bool = false,
-                 pairings: Set<String> = [],
-                 regionClasses: Set<String> = [],
-                 highPersonalization: Bool = false) {
+    init(drySweetScale: Double = 3.0,
+         tanninScale: Double = 3.0,
+         softAcidityScale: Double = 3.0,
+         lightBoldScale: Double = 3.0,
+         fizzinessScale: Double = 3.0,
+         categories: Set<String> = [],
+         flavorProfiles: Set<String> = [],
+         flavorSpecifics: Set<String> = [],
+         isPairing: Bool = false,
+         pairings: Set<String> = [],
+         regionClasses: Set<String> = [],
+         highPersonalization: Bool = false) {
         
         self.drySweetScale = drySweetScale
         self.tanninScale = tanninScale
@@ -51,5 +48,5 @@ class UserPreferences: Codable {
         self.regionClasses = regionClasses
         self.highPersonalization = highPersonalization
     }
-    
 }
+

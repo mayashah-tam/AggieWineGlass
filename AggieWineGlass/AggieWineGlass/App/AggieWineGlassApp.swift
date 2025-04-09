@@ -21,61 +21,28 @@ import SwiftUI
 
 @main
 struct AggieWineGlassApp: App {
+    @StateObject private var preferences = UserPreferences()
+    @StateObject private var wineDataInfo = WineDataInfo()
+    
+    private var wineViewModel: WineViewModel
+    
+    init() {
+        let wineInfo = WineDataInfo()
+        self._wineDataInfo = StateObject(wrappedValue: wineInfo)
+        self.wineViewModel = WineViewModel(wineDataInfo: wineInfo)
+        
+        if let filePath = Bundle.main.path(forResource: "WineListData", ofType: "csv") {
+            wineViewModel.loadWineData(filepath: filePath)
+        } else {
+            print("❌ WineListData.csv not found in bundle.")
+        }
+    }
+    
     var body: some Scene {
         WindowGroup {
-            NavigationView {
-                VStack {
-                    NavigationLink(destination: WineView()) {
-                        Text("Go to Wine View")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                            .padding()
-                    }
-                    
-                    NavigationLink(destination: SliderScalesView()) {
-                        Text("Go to Slider Scales View")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                            .padding()
-                    }
-                    
-                    NavigationLink(destination: CategorySelectionView()) {
-                        Text("Go to Category Selection View")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                            .padding()
-                    }
-                    
-                    NavigationLink(destination: FlavorProfileSelectionView()) {
-                        Text("Go to Flavor Profile Selection View")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                            .padding()
-                    }
-                    
-                    NavigationLink(destination: PairingsSelectionView()) {
-                        Text("Go to Pairings Selection View")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                            .padding()
-                    }
-                    
-                    NavigationLink(destination: RegionsSelectionView()) {
-                        Text("Go to Regions Selection View")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                            .padding()
-                    }
-                    
-                    NavigationLink(destination: PersonalizataionSelectionView()) {
-                        Text("Go to Personalization Selection View")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                            .padding()
-                    }
-                }
-                .navigationTitle("Main Menu")
-            }
+            RootView()
+                .environmentObject(preferences)
+                .environmentObject(wineDataInfo)
         }
     }
 }

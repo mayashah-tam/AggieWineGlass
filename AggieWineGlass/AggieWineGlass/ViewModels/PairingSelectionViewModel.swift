@@ -9,9 +9,14 @@ import Foundation
 import Combine
 
 class PairingSelectionViewModel: ObservableObject {
-    @Published var preferences = UserPreferences.shared
-    @Published var wineDataInfo = WineDataInfo.shared
     @Published var uniqueFilteredPairings: Set<String> = []
+    var preferences: UserPreferences
+    var wineDataInfo: WineDataInfo
+    
+    init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
+        self.wineDataInfo = wineDataInfo
+        self.preferences = preferences
+    }
     
     func turnOnPairingSelection() {
         preferences.isPairing = true
@@ -24,7 +29,6 @@ class PairingSelectionViewModel: ObservableObject {
         uniqueFilteredPairings = Set(filteredPairings)
     }
 
-    // function to toggle selection of pairings
     func togglePairingSelection(pairing: String) {
         if preferences.pairings.contains(pairing) {
             preferences.pairings.remove(pairing)
@@ -36,7 +40,7 @@ class PairingSelectionViewModel: ObservableObject {
 
     func selectAllPairings() {
         // this would need to be changed to all associated pairings based on selected wine categories
-        preferences.pairings = Set(WineDataInfo.shared.uniquePairings)
+        preferences.pairings = Set(wineDataInfo.uniquePairings)
         print(preferences.pairings)
     }
     

@@ -6,9 +6,14 @@
 //
 
 import Foundation
+import SwiftUI
 
 class WineViewModel: ObservableObject {
-    @Published var wineDataInfo = WineDataInfo.shared
+    var wineDataInfo: WineDataInfo
+
+    init(wineDataInfo: WineDataInfo) {
+        self.wineDataInfo = wineDataInfo
+    }
     
     // reads in the raw data from the csv file
     // generates lists of unique categories, flavor profiles, flavor specifics, unique pairings

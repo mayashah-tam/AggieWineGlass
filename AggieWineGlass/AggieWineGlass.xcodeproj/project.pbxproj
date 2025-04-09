@@ -10,9 +10,22 @@
 		2105B61F2D9D120C00A6E478 /* AggieWineGlass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AggieWineGlass.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		21ACF5702DA6F18D00B76FE0 /* Exceptions for "AggieWineGlass" folder in "AggieWineGlass" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 2105B61E2D9D120C00A6E478 /* AggieWineGlass */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7B24AAD02DA369030002C2EE /* AggieWineGlass */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				21ACF5702DA6F18D00B76FE0 /* Exceptions for "AggieWineGlass" folder in "AggieWineGlass" target */,
+			);
 			path = AggieWineGlass;
 			sourceTree = "<group>";
 		};
@@ -250,6 +263,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"AggieWineGlass/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AggieWineGlass/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -287,6 +301,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"AggieWineGlass/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AggieWineGlass/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

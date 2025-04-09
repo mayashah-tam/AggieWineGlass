@@ -1,4 +1,4 @@
-//
+
 //  RegionSelectionViewModel.swift
 //  AggieWineGlass
 //
@@ -9,7 +9,13 @@ import Foundation
 import Combine
 
 class RegionSelectionViewModel: ObservableObject {
-    @Published var preferences = UserPreferences.shared
+    var preferences: UserPreferences
+    var wineDataInfo: WineDataInfo
+    
+    init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
+        self.wineDataInfo = wineDataInfo
+        self.preferences = preferences
+    }
 
     // function to toggle selection of regions
     func toggleRegionSelection(region: String) {
@@ -22,7 +28,7 @@ class RegionSelectionViewModel: ObservableObject {
     }
 
     func selectAllRegions() {
-        preferences.regionClasses = Set(WineDataInfo.shared.uniqueRegionClasses)
+        preferences.regionClasses = Set(wineDataInfo.uniqueRegionClasses)
         print(preferences.regionClasses)
     }
     

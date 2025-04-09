@@ -8,64 +8,77 @@
 import SwiftUI
 
 struct FlavorProfileSelectionView: View {
-    @StateObject var viewModel = FlavorProfileSelectionModel()
+    @EnvironmentObject var preferences: UserPreferences
+    @EnvironmentObject var wineDataInfo: WineDataInfo
 
-    // Observing the shared wine data info object to check when categories are ready
-    @ObservedObject var wineDataInfo = WineDataInfo.shared
+    @StateObject private var viewModel: FlavorProfileSelectionViewModel
+    @State private var showPersonalizationSelection = false
 
-    // TODO -- fix the UI -- the functionality works, but the buttons don't actually check off
+    init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
+        _viewModel = StateObject(wrappedValue:
+            FlavorProfileSelectionViewModel(
+                preferences: preferences,
+                wineDataInfo: wineDataInfo
+            )
+        )
+    }
+
     var body: some View {
         VStack {
             Text("Select Flavor Profiles:")
                 .font(.headline)
                 .padding()
 
-            // Only show categories if they are loaded
             if wineDataInfo.uniqueFlavorProfiles.isEmpty {
                 Text("Loading flavor profiles...")
                     .padding()
             } else {
-                // Display the unique categories from the singleton WineDataInfo shared instance
                 List(wineDataInfo.uniqueFlavorProfiles.sorted(), id: \.self) { flavorProfile in
-                    HStack {
-                        // Custom checkbox-like toggle using a Button and Image
-                        Button(action: {
-                            viewModel.toggleFlavorProfileSelection(flavorProfile: flavorProfile)
-                        }) {
-                            HStack {
-                                Image(systemName: viewModel.preferences.flavorProfiles.contains(flavorProfile) ? "checkmark.square" : "square")
-                                    .foregroundColor(.blue) // Change the color as needed
-                                Text(flavorProfile)
-                                    .foregroundColor(.primary)
-                            }
+                    Button(action: {
+                        viewModel.toggleFlavorProfileSelection(flavorProfile: flavorProfile)
+                    }) {
+                        HStack {
+                            Image(systemName: viewModel.preferences.flavorProfiles.contains(flavorProfile) ? "checkmark.square" : "square")
+                                .foregroundColor(.blue)
+                            Text(flavorProfile)
+                                .foregroundColor(.primary)
                         }
-                        .buttonStyle(PlainButtonStyle()) // Ensures no default button style interferes
                     }
+                    .buttonStyle(PlainButtonStyle())
                 }
 
-                // Button to select all categories
-                Button(action: {
+                Button("Select All Flavor Profiles") {
                     viewModel.selectAllFlavorProfiles()
-                }) {
-                    Text("Select All Flavor Profiles")
-                        .foregroundColor(.blue)
-                        .padding()
                 }
+                .foregroundColor(.blue)
+                .padding()
 
-                // Add a button to clear all selections if desired
-                Button(action: {
+                Button("Clear All Flavor Profiles") {
                     viewModel.clearAllFlavorProfiles()
-                }) {
-                    Text("Clear All Flavor Profules")
-                        .foregroundColor(.red)
-                        .padding()
                 }
+                .foregroundColor(.red)
+                .padding()
+
+                Button("Next") {
+                    showPersonalizationSelection = true
+                }
+                .font(.title2)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.accentColor)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+                .padding(.top)
             }
         }
         .padding()
         .onAppear {
-            // Print the uniqueCategories when the view appears
             print("Unique Flavor Profiles: \(wineDataInfo.uniqueFlavorProfiles)")
+        }
+        .navigationDestination(isPresented: $showPersonalizationSelection) {
+            PersonalizationSelectionView(
+                preferences: preferences
+            )
         }
     }
 }

@@ -8,10 +8,19 @@
 import SwiftUI
 
 struct RegionsSelectionView: View {
-    @StateObject var viewModel = RegionSelectionViewModel()
-
-    // Observing the shared wine data info object to check when categories are ready
-    @ObservedObject var wineDataInfo = WineDataInfo.shared
+    @EnvironmentObject var preferences: UserPreferences
+    @EnvironmentObject var wineDataInfo: WineDataInfo
+    
+    @StateObject private var viewModel: RegionSelectionViewModel
+    
+    init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
+        _viewModel = StateObject(wrappedValue:
+            RegionSelectionViewModel (
+                preferences: preferences,
+                wineDataInfo: wineDataInfo
+            )
+        )
+    }
 
     // TODO -- fix the UI -- the functionality works, but the buttons don't actually check off
     var body: some View {

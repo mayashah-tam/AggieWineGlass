@@ -1,4 +1,4 @@
-//
+
 //  SliderScalesViewModel.swift
 //  AggieWineGlass
 //
@@ -9,7 +9,11 @@ import Foundation
 import Combine
 
 class SliderScalesViewModel: ObservableObject {
-    @Published var preferences = UserPreferences.shared  // access singleton instance -- this will be a shared user preferneces instance between all classes
+    var preferences: UserPreferences
+    
+    init(preferences: UserPreferences) {
+        self.preferences = preferences
+    }
         
     func updateDrySweetScale() {
         UserDefaults.standard.set(preferences.drySweetScale, forKey: "UpdateDrySweetScale")
