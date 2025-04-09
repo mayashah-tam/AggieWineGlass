@@ -22,7 +22,7 @@ struct FlavorProfileSelectionView: View {
 
             // Only show categories if they are loaded
             if wineDataInfo.uniqueFlavorProfiles.isEmpty {
-                Text("Loading categories...")
+                Text("Loading flavor profiles...")
                     .padding()
             } else {
                 // Display the unique categories from the singleton WineDataInfo shared instance

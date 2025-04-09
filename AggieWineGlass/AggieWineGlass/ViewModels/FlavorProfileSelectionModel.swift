@@ -11,7 +11,7 @@ import Combine
 class FlavorProfileSelectionModel: ObservableObject {
     @Published var preferences = UserPreferences.shared
 
-    // function to toggle selection of categories
+    // function to toggle selection of flavor profiles
     func toggleFlavorProfileSelection(flavorProfile: String) {
         if preferences.flavorProfiles.contains(flavorProfile) {
             preferences.flavorProfiles.remove(flavorProfile)
