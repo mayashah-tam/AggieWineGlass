@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct SelectAllView: View {
-    @StateObject var viewModel = SelectAllViewModel()
+struct CategorySelectionView: View {
+    @StateObject var viewModel = CategorySelectionViewModel()
 
     // Observing the shared wine data info object to check when categories are ready
     @ObservedObject var wineDataInfo = WineDataInfo.shared
