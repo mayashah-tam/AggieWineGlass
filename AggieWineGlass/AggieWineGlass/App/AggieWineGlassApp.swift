@@ -23,7 +23,7 @@ import SwiftUI
 struct AggieWineGlassApp: App {
     var body: some Scene {
         WindowGroup {
-            WineView()
+            SliderScalesView()
         }
     }
 }
