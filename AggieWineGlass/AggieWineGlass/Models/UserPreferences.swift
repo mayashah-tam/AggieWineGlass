@@ -17,6 +17,8 @@ class UserPreferences: ObservableObject {
     @Published var categories: Set<String>
     @Published var flavorProfiles: Set<String>
     @Published var flavorSpecifics: Set<String>
+    @Published var flavorProfilesNum: [String: Double]
+    @Published var flavorSpecificsNum: [String: Double]
     @Published var isPairing: Bool
     @Published var pairings: Set<String>
     @Published var regionClasses: Set<String>
@@ -30,6 +32,8 @@ class UserPreferences: ObservableObject {
          categories: Set<String> = [],
          flavorProfiles: Set<String> = [],
          flavorSpecifics: Set<String> = [],
+         flavorProfilesNum: [String: Double] = [:],
+         flavorSpecificsNum: [String: Double] = [:],
          isPairing: Bool = false,
          pairings: Set<String> = [],
          regionClasses: Set<String> = [],
@@ -43,6 +47,8 @@ class UserPreferences: ObservableObject {
         self.categories = categories
         self.flavorProfiles = flavorProfiles
         self.flavorSpecifics = flavorSpecifics
+        self.flavorProfilesNum = flavorProfilesNum
+        self.flavorSpecificsNum = flavorSpecificsNum
         self.isPairing = isPairing
         self.pairings = pairings
         self.regionClasses = regionClasses
