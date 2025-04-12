@@ -36,6 +36,17 @@ class FlavorProfileSelectionViewModel: ObservableObject {
         preferences.flavorProfiles.removeAll()
         print(preferences.flavorProfiles)
     }
+    
+    func setProfileSpecifics() {
+        for profile in preferences.flavorProfiles {
+            for profileSpecific in wineDataInfo.flavorMap[profile] ?? [] {
+                if !preferences.flavorSpecifics.contains(profileSpecific) {
+                    preferences.flavorSpecifics.insert(profileSpecific)
+                }
+            }
+        }
+        print(preferences.flavorSpecifics)
+    }
 }
 
 

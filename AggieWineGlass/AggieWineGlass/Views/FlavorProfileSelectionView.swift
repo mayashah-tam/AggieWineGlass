@@ -60,6 +60,7 @@ struct FlavorProfileSelectionView: View {
                 .padding()
 
                 Button("Next") {
+                    viewModel.setProfileSpecifics()
                     showPersonalizationSelection = true
                 }
                 .font(.title2)
