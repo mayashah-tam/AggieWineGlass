@@ -168,6 +168,6 @@ class RecommendationViewModel: ObservableObject {
         }
         
         let sortedWineList = totalWineScores.sorted { $0.value > $1.value }
-        print(sortedWineList)
+        // print(sortedWineList)
     }
 }
