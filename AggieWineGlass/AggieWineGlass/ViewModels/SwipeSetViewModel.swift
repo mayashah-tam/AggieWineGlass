@@ -29,7 +29,7 @@ class SwipeSetViewModel: ObservableObject {
         swipeSet = []
     }
     
-    private func setSwipeSets() {
+    func setSwipeSets() {
         if (!preferences.highPersonalization) {
             if (preferences.categories.contains("Red wine") && preferences.categories.contains("White wine") && preferences.categories.contains("Sparkling wine")) {
                 redWineSets = 1
