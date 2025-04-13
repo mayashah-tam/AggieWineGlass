@@ -79,7 +79,7 @@ class SwipeSetViewModel: ObservableObject {
         print(roseWineNum)
     }
     
-    func wineCBF(filterCategories: [String]) -> [Wine] {
+    func wineCBF(filterCategories: [String], filterRegionClass: [String]) -> [Wine] {
         let filteredCBFWines = wineDataInfo.wines.filter { wine in
 
             let matchCategory = filterCategories.contains(wine.category)
