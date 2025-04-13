@@ -37,16 +37,30 @@ class FlavorProfileSelectionViewModel: ObservableObject {
         print(preferences.flavorProfiles)
     }
     
+    // this sets the baseline value for the profile and the specifics
     func setProfileSpecifics() {
         for profile in preferences.flavorProfiles {
+            // shouldn't be any duplicates, but just a check for it in case
+            if (!preferences.flavorProfilesNum.keys.contains(profile)) {
+                preferences.flavorProfilesNum[profile] = 3.0
+            }
             for profileSpecific in wineDataInfo.flavorMap[profile] ?? [] {
-                if !preferences.flavorSpecifics.contains(profileSpecific) {
+                // shouldn't be any duplicates, but just a check in case
+                if (!preferences.flavorSpecifics.contains(profileSpecific)) {
                     preferences.flavorSpecifics.insert(profileSpecific)
+                }
+                // shouldn't be any overlap in the mapping, but just a check in case
+                if (!preferences.flavorSpecificsNum.keys.contains(profileSpecific)) {
+                    preferences.flavorSpecificsNum[profileSpecific] = 1.0
+                } else {
+                    preferences.flavorSpecificsNum[profileSpecific]! += 1.0
                 }
             }
         }
-        print(preferences.flavorSpecifics)
+        print(preferences.flavorProfilesNum)
+        print(preferences.flavorSpecificsNum)
     }
+    
 }
 
 
