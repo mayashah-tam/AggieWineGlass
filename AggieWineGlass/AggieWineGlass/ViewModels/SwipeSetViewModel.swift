@@ -278,6 +278,7 @@ class SwipeSetViewModel: ObservableObject {
                 if let wine = findCategoryWineRandom(filterCategories: ["Dessert wine"]) {
                     miniSet.append(wine)
                 }
+                miniSetUpdate(miniSet: miniSet)
                 dessertWineNum -= 1
             }
             if (roseWineNum > 0) {
@@ -285,6 +286,8 @@ class SwipeSetViewModel: ObservableObject {
                 if let wine = findCategoryWineRandom(filterCategories: ["Rosé wine"]) {
                     miniSet.append(wine)
                 }
+                miniSetUpdate(miniSet: miniSet)
+                roseWineNum -= 1
             }
         }
     }
