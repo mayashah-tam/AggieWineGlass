@@ -236,7 +236,7 @@ class SwipeSetViewModel: ObservableObject {
         return filteredCategoryWines.randomElement()
     }
     
-    private func createMiniSet(filterCategory: String) -> [Wine] {
+    func createMiniSet(filterCategory: String) -> [Wine] {
         var miniSet: [Wine] = []
         
         let scaleWineRandom = (findScaleWineRandom(filterCategories: [filterCategory], filterRegionClass: preferences.regionClasses) ?? nil)!
@@ -251,7 +251,7 @@ class SwipeSetViewModel: ObservableObject {
         return miniSet
     }
     
-    private func miniSetUpdate(miniSet: [Wine], direction: [Bool], threeProfileSpecifics: [String]) {
+    func miniSetUpdate(miniSet: [Wine], direction: [Bool], threeProfileSpecifics: [String]) {
         //TODO
     }
     
