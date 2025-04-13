@@ -116,41 +116,30 @@ class SwipeSetViewModel: ObservableObject {
         return denominator != 0 ? dotProduct / denominator : 0.0
     }
 
-    func weightedJaccardSimiliarity(wineAttributeList: [String]?, userAttributeNums: [String: Double], attribute: String) -> Double {
+    func weightedJaccardSimiliarity(wineAttributeList: [String], userAttributeNums: [String: Double], attribute: String) -> Double {
         
         let vector = userAttributeNums.values
         let magnitude = sqrt(vector.map { $0 * $0 }.reduce(0, +))
         guard magnitude != 0 else { return 0.0 }
-        let weights = vector.map { $0 / magnitude }
+        let weightsMap = userAttributeNums.mapValues { $0 / magnitude }
         
-        let attributeList: [String]  = {
-                switch attribute {
-                case "Flavor Profile": return Array(preferences.flavorProfilesNum.keys)
-                case "Profile Specifics": return Array(preferences.flavorSpecificsNum.keys)
-                case "Pairings": return Array(preferences.pairings)
-                default: return []
-                }
-            }()
-        
-        // build the wine attribute binary vector
-        var wineAttributeListBinary: [Double] = []
-        for attribute in attributeList {
-            if let wineList = wineAttributeList {
-                    wineAttributeListBinary.append(wineList.contains(attribute) ? 1 : 0)
-                }
+        var selectedWeights: [Double] = []
+        for attribute in wineAttributeList {
+            selectedWeights.append(weightsMap[attribute] ?? 0.0)
         }
         
-        let attributeNumsList: [Double]  = {
-                switch attribute {
-                case "Flavor Profile": return Array(preferences.flavorProfilesNum.values)
-                case "Profile Specifics": return Array(preferences.flavorSpecificsNum.values)
-                case "Pairings": return Array(repeating: 1.0, count: preferences.pairings.count)
-                default: return []
-                }
-            }()
+        // build the user attribute binary vector
+        var userAttributeListBinary: [Double] = []
+        for attribute in wineAttributeList {
+            if userAttributeNums.keys.contains(attribute) {
+                userAttributeListBinary.append(1.0)
+            } else {
+                userAttributeListBinary.append(1.0)
+            }
+        }
         
-        // build the user category preference binary vector
-        let userAttributeListBinary: [Double] = attributeNumsList.map { $0 > 0.0 ? 1.0 : 0.0 }
+        // build the wine category preference binary vector
+        let wineAttributeListBinary: [Double] = Array(repeating: 1.0, count: wineAttributeList.count)
         
         // compute weighted intersection and union
         let zippedPairs = zip(userAttributeListBinary, wineAttributeListBinary)
@@ -158,7 +147,7 @@ class SwipeSetViewModel: ObservableObject {
             let userBit = pair.0
             let wineBit = pair.1
             if (Int(userBit) & Int(wineBit)) == 1 {
-                return weights[index]
+                return selectedWeights[index]
             } else {
                 return 0.0
             }
@@ -170,7 +159,7 @@ class SwipeSetViewModel: ObservableObject {
             let userBit = pair.0
             let wineBit = Int(pair.1)
             if (Int(userBit) | wineBit) == 1 {
-                return weights[index]
+                return selectedWeights[index]
             } else {
                 return 0.0
             }
@@ -217,14 +206,17 @@ class SwipeSetViewModel: ObservableObject {
         
         var flavorWineJaccardScores: [String: Double] = [:]
         for wine in filteredCategoryWines {
-            let similarityScore = weightedJaccardSimiliarity(wineAttributeList: wine.flavorProfile, userAttributeNums: preferences.flavorProfilesNum, attribute: "Flavor Profile")
+            let similarityProfileScore = weightedJaccardSimiliarity(wineAttributeList: wine.flavorProfile, userAttributeNums: preferences.flavorProfilesNum, attribute: "Flavor Profile")
+            let similaritySpecificsScore = weightedJaccardSimiliarity(wineAttributeList: wine.profileSpecifics, userAttributeNums: preferences.flavorSpecificsNum, attribute: "Profile Specifics")
             
-            flavorWineJaccardScores[wine.id] = similarityScore
+            let totalScore = similarityProfileScore * 0.6 + similaritySpecificsScore * 0.4
+            flavorWineJaccardScores[wine.id] = totalScore
         }
         
         let sortedFlavorWineList = flavorWineJaccardScores
             .sorted(by: { $0.value > $1.value })
             .prefix(20)
+        print(sortedFlavorWineList)
         
         if let randomEntry = sortedFlavorWineList.randomElement(),
            let selectedWine = filteredCategoryWines.first(where: { $0.id == randomEntry.key }) {
@@ -264,17 +256,17 @@ class SwipeSetViewModel: ObservableObject {
     func completeSwipeSet() {
         while (redWineSets > 0 || whiteWineSets > 0 || sparklingWineSets > 0 || dessertWineNum > 0 || roseWineNum > 0) {
             if (redWineSets > 0) {
-                var miniSet: [Wine] = createMiniSet(filterCategory: "Red wine")
+                let miniSet: [Wine] = createMiniSet(filterCategory: "Red wine")
                 miniSetUpdate(miniSet: miniSet)
                 redWineSets -= 1
             }
             if (whiteWineSets > 0) {
-                var miniSet: [Wine] = createMiniSet(filterCategory: "White wine")
+                let miniSet: [Wine] = createMiniSet(filterCategory: "White wine")
                 miniSetUpdate(miniSet: miniSet)
                 whiteWineSets -= 1
             }
             if (sparklingWineSets > 0) {
-                var miniSet: [Wine] = createMiniSet(filterCategory: "Sparking wine")
+                let miniSet: [Wine] = createMiniSet(filterCategory: "Sparking wine")
                 miniSetUpdate(miniSet: miniSet)
                 sparklingWineSets -= 1
             }
