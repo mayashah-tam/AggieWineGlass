@@ -55,41 +55,30 @@ class RecommendationViewModel: ObservableObject {
         return denominator != 0 ? dotProduct / denominator : 0.0
     }
 
-    func weightedJaccardSimiliarity(wineAttributeList: [String]?, userAttributeNums: [String: Double], attribute: String) -> Double {
+    func weightedJaccardSimiliarity(wineAttributeList: [String], userAttributeNums: [String: Double], attribute: String) -> Double {
         
         let vector = userAttributeNums.values
         let magnitude = sqrt(vector.map { $0 * $0 }.reduce(0, +))
         guard magnitude != 0 else { return 0.0 }
-        let weights = vector.map { $0 / magnitude }
+        let weightsMap = userAttributeNums.mapValues { $0 / magnitude }
         
-        let attributeList: [String]  = {
-                switch attribute {
-                case "Flavor Profile": return Array(preferences.flavorProfilesNum.keys)
-                case "Profile Specifics": return Array(preferences.flavorSpecificsNum.keys)
-                case "Pairings": return Array(preferences.pairings)
-                default: return []
-                }
-            }()
-        
-        // build the wine attribute binary vector
-        var wineAttributeListBinary: [Double] = []
-        for attribute in attributeList {
-            if let wineList = wineAttributeList {
-                    wineAttributeListBinary.append(wineList.contains(attribute) ? 1 : 0)
-                }
+        var selectedWeights: [Double] = []
+        for attribute in wineAttributeList {
+            selectedWeights.append(weightsMap[attribute] ?? 0.0)
         }
         
-        let attributeNumsList: [Double]  = {
-                switch attribute {
-                case "Flavor Profile": return Array(preferences.flavorProfilesNum.values)
-                case "Profile Specifics": return Array(preferences.flavorSpecificsNum.values)
-                case "Pairings": return Array(repeating: 1.0, count: preferences.pairings.count)
-                default: return []
-                }
-            }()
+        // build the user attribute binary vector
+        var userAttributeListBinary: [Double] = []
+        for attribute in wineAttributeList {
+            if userAttributeNums.keys.contains(attribute) {
+                userAttributeListBinary.append(1.0)
+            } else {
+                userAttributeListBinary.append(1.0)
+            }
+        }
         
-        // build the user category preference binary vector
-        let userAttributeListBinary: [Double] = attributeNumsList.map { $0 > 0.0 ? 1.0 : 0.0 }
+        // build the wine category preference binary vector
+        let wineAttributeListBinary: [Double] = Array(repeating: 1.0, count: wineAttributeList.count)
         
         // compute weighted intersection and union
         let zippedPairs = zip(userAttributeListBinary, wineAttributeListBinary)
@@ -97,7 +86,7 @@ class RecommendationViewModel: ObservableObject {
             let userBit = pair.0
             let wineBit = pair.1
             if (Int(userBit) & Int(wineBit)) == 1 {
-                return weights[index]
+                return selectedWeights[index]
             } else {
                 return 0.0
             }
@@ -109,7 +98,7 @@ class RecommendationViewModel: ObservableObject {
             let userBit = pair.0
             let wineBit = Int(pair.1)
             if (Int(userBit) | wineBit) == 1 {
-                return weights[index]
+                return selectedWeights[index]
             } else {
                 return 0.0
             }
@@ -157,13 +146,23 @@ class RecommendationViewModel: ObservableObject {
         
         var totalWineScores: [String: Double] = [:]
         for wine in cbfWineResults {
-            let cosine = (scaleWineCosineScores[wine.id] ?? 0.0) * 0.20
-            let flavorProfile = (flavorProfileWineJaccardScores[wine.id] ?? 0.0) * 0.20
-            let profileSpecifics = (profileSpecificsWineJaccardScores[wine.id] ?? 0.0) * 0.20
-            let pairings = (pairingsWineJaccardScores[wine.id] ?? 0.0) * 0.20
-            let rating = wine.rating/5.0 * 0.20
-            
-            let totalScore = cosine + flavorProfile + profileSpecifics + pairings + rating
+            var totalScore = 0.0
+            if (preferences.isPairing) {
+                let cosine = (scaleWineCosineScores[wine.id] ?? 0.0) * 0.20
+                let flavorProfile = (flavorProfileWineJaccardScores[wine.id] ?? 0.0) * 0.20
+                let profileSpecifics = (profileSpecificsWineJaccardScores[wine.id] ?? 0.0) * 0.20
+                let pairings = (pairingsWineJaccardScores[wine.id] ?? 0.0) * 0.20
+                let rating = wine.rating/5.0 * 0.20
+                
+                totalScore = cosine + flavorProfile + profileSpecifics + pairings + rating
+            } else {
+                let cosine = (scaleWineCosineScores[wine.id] ?? 0.0) * 0.25
+                let flavorProfile = (flavorProfileWineJaccardScores[wine.id] ?? 0.0) * 0.25
+                let profileSpecifics = (profileSpecificsWineJaccardScores[wine.id] ?? 0.0) * 0.25
+                let rating = wine.rating/5.0 * 0.25
+                
+                totalScore = cosine + flavorProfile + profileSpecifics + rating
+            }
             
             totalWineScores[wine.id] = totalScore
         }
