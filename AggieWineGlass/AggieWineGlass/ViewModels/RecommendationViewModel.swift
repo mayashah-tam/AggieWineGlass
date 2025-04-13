@@ -32,6 +32,7 @@ class RecommendationViewModel: ObservableObject {
             let matchLightBold = wine.lightBold >= preferences.lightBoldScale - 2.0 && wine.lightBold <= preferences.lightBoldScale + 2.0
 
             return matchCategory &&
+                    matchRegionClass &&
                     matchDrySweet &&
                     matchTannin &&
                     matchSoftAcidic &&

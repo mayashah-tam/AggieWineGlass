@@ -83,6 +83,7 @@ class SwipeSetViewModel: ObservableObject {
         let filteredCBFWines = wineDataInfo.wines.filter { wine in
 
             let matchCategory = filterCategories.contains(wine.category)
+            let matchRegionClass = filterRegionClass.contains(wine.regionClass)
             
             let matchDrySweet = wine.drySweet >= preferences.drySweetScale - 1.5 && wine.drySweet <= preferences.drySweetScale + 1.5
             
@@ -93,6 +94,7 @@ class SwipeSetViewModel: ObservableObject {
             let matchLightBold = wine.lightBold >= preferences.lightBoldScale - 2.0 && wine.lightBold <= preferences.lightBoldScale + 2.0
 
             return matchCategory &&
+                    matchRegionClass &&
                     matchDrySweet &&
                     matchTannin &&
                     matchSoftAcidic &&
