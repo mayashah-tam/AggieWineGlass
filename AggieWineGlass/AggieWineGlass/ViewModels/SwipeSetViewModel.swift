@@ -175,8 +175,8 @@ class SwipeSetViewModel: ObservableObject {
         }
     }
     
-    func findScaleWineRandom(filterCategories: [String]) -> Wine? {
-        let scaleWineResults = wineCBF(filterCategories: filterCategories)
+    func findScaleWineRandom(filterCategories: [String], filterRegionClass: [String]) -> Wine? {
+        let scaleWineResults = wineCBF(filterCategories: filterCategories, filterRegionClass: filterRegionClass)
         var scaleWineCosineScores: [String: Double] = [:]
         let userScalePreferences = [preferences.drySweetScale, preferences.tanninScale, preferences.softAcidityScale, preferences.lightBoldScale, preferences.fizzinessScale]
         
@@ -239,7 +239,7 @@ class SwipeSetViewModel: ObservableObject {
     func createMiniSet(filterCategory: String) -> [Wine] {
         var miniSet: [Wine] = []
         
-        let scaleWineRandom = (findScaleWineRandom(filterCategories: [filterCategory]) ?? nil)!
+        let scaleWineRandom = (findScaleWineRandom(filterCategories: [filterCategory], filterRegionClass: Array(preferences.regionClasses)) ?? nil)!
         miniSet.append(scaleWineRandom)
         
         let flavorWineRandom = (findFlavorWineRandom(filterCategories: [filterCategory]) ?? nil)!
