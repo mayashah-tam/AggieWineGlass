@@ -255,6 +255,7 @@ class SwipeSetViewModel: ObservableObject {
         //TODO
     }
     
+    // MOVE THIS LOGIC TO VIEW 
     func completeSwipeSet() {
         setSwipeSets()
         while (redWineSets > 0 || whiteWineSets > 0 || sparklingWineSets > 0 || dessertWineNum > 0 || roseWineNum > 0) {
