@@ -227,7 +227,7 @@ class SwipeSetViewModel: ObservableObject {
         return nil
     }
     
-    private func findCategoryWineRandom(filterCategories: [String]) -> Wine? {
+    func findCategoryWineRandom(filterCategories: [String]) -> Wine? {
         let filteredCategoryWines = wineDataInfo.wines.filter { wine in
             let matchCategory = filterCategories.contains(wine.category)
             return matchCategory
@@ -255,23 +255,23 @@ class SwipeSetViewModel: ObservableObject {
         //TODO
     }
     
-    // MOVE THIS LOGIC TO VIEW 
+    // MOVE THIS LOGIC TO VIEW
     func completeSwipeSet() {
         setSwipeSets()
         while (redWineSets > 0 || whiteWineSets > 0 || sparklingWineSets > 0 || dessertWineNum > 0 || roseWineNum > 0) {
             if (redWineSets > 0) {
                 let miniSet: [Wine] = createMiniSet(filterCategory: "Red wine")
-                //miniSetUpdate(miniSet: miniSet, direction: [bool], threeProfileSpecifics)
+                //miniSetUpdate(miniSet: miniSet, direction: [bool], threeProfileSpecifics: [String])
                 redWineSets -= 1
             }
             if (whiteWineSets > 0) {
                 let miniSet: [Wine] = createMiniSet(filterCategory: "White wine")
-                //miniSetUpdate(miniSet: miniSet, direction: [bool], threeProfileSpecifics)
+                //miniSetUpdate(miniSet: miniSet, direction: [bool], threeProfileSpecifics: [String])
                 whiteWineSets -= 1
             }
             if (sparklingWineSets > 0) {
                 let miniSet: [Wine] = createMiniSet(filterCategory: "Sparking wine")
-                //miniSetUpdate(miniSet: miniSet, direction: [bool], threeProfileSpecifics)
+                //miniSetUpdate(miniSet: miniSet, direction: [bool], threeProfileSpecifics: [String])
                 sparklingWineSets -= 1
             }
             if (dessertWineNum > 0) {
@@ -279,7 +279,7 @@ class SwipeSetViewModel: ObservableObject {
                 if let wine = findCategoryWineRandom(filterCategories: ["Dessert wine"]) {
                     miniSet.append(wine)
                 }
-                //miniSetUpdate(miniSet: miniSet, direction: [bool], threeProfileSpecifics)
+                //miniSetUpdate(miniSet: miniSet, direction: [bool], threeProfileSpecifics: [String])
                 dessertWineNum -= 1
             }
             if (roseWineNum > 0) {
@@ -287,7 +287,7 @@ class SwipeSetViewModel: ObservableObject {
                 if let wine = findCategoryWineRandom(filterCategories: ["Rosé wine"]) {
                     miniSet.append(wine)
                 }
-                //miniSetUpdate(miniSet: miniSet, direction: [bool], threeProfileSpecifics)
+                //miniSetUpdate(miniSet: miniSet, direction: [bool], threeProfileSpecifics: [String])
                 roseWineNum -= 1
             }
         }
