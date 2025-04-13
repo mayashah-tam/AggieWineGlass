@@ -12,7 +12,7 @@ struct PersonalizationSelectionView: View {
     @EnvironmentObject var wineDataInfo: WineDataInfo
 
     @StateObject private var viewModel: PersonalizationSelectionViewModel
-    @State private var showWineView = false
+    @State private var showSwipeSetView = false
 
     init(preferences: UserPreferences) {
         _viewModel = StateObject(wrappedValue:
@@ -43,7 +43,7 @@ struct PersonalizationSelectionView: View {
             }
 
             Button("Next") {
-                showWineView = true
+                showSwipeSetView = true
             }
             .font(.title2)
             .padding()
@@ -54,8 +54,8 @@ struct PersonalizationSelectionView: View {
             .padding(.top)
         }
         .padding()
-        .navigationDestination(isPresented: $showWineView) {
-            WineView()
+        .navigationDestination(isPresented: $showSwipeSetView) {
+            SwipeSetView(preferences: preferences, wineDataInfo: wineDataInfo)
         }
     }
 }
