@@ -251,7 +251,7 @@ class SwipeSetViewModel: ObservableObject {
         return miniSet
     }
     
-    private func miniSetUpdate(miniSet: [Wine]) {
+    private func miniSetUpdate(miniSet: [Wine], direction: [Bool], threeProfileSpecifics: [String]) {
         //TODO
     }
     
@@ -260,17 +260,17 @@ class SwipeSetViewModel: ObservableObject {
         while (redWineSets > 0 || whiteWineSets > 0 || sparklingWineSets > 0 || dessertWineNum > 0 || roseWineNum > 0) {
             if (redWineSets > 0) {
                 let miniSet: [Wine] = createMiniSet(filterCategory: "Red wine")
-                miniSetUpdate(miniSet: miniSet)
+                //miniSetUpdate(miniSet: miniSet, direction: [bool], threeProfileSpecifics)
                 redWineSets -= 1
             }
             if (whiteWineSets > 0) {
                 let miniSet: [Wine] = createMiniSet(filterCategory: "White wine")
-                miniSetUpdate(miniSet: miniSet)
+                //miniSetUpdate(miniSet: miniSet, direction: [bool], threeProfileSpecifics)
                 whiteWineSets -= 1
             }
             if (sparklingWineSets > 0) {
                 let miniSet: [Wine] = createMiniSet(filterCategory: "Sparking wine")
-                miniSetUpdate(miniSet: miniSet)
+                //miniSetUpdate(miniSet: miniSet, direction: [bool], threeProfileSpecifics)
                 sparklingWineSets -= 1
             }
             if (dessertWineNum > 0) {
@@ -278,7 +278,7 @@ class SwipeSetViewModel: ObservableObject {
                 if let wine = findCategoryWineRandom(filterCategories: ["Dessert wine"]) {
                     miniSet.append(wine)
                 }
-                miniSetUpdate(miniSet: miniSet)
+                //miniSetUpdate(miniSet: miniSet, direction: [bool], threeProfileSpecifics)
                 dessertWineNum -= 1
             }
             if (roseWineNum > 0) {
@@ -286,7 +286,7 @@ class SwipeSetViewModel: ObservableObject {
                 if let wine = findCategoryWineRandom(filterCategories: ["Rosé wine"]) {
                     miniSet.append(wine)
                 }
-                miniSetUpdate(miniSet: miniSet)
+                //miniSetUpdate(miniSet: miniSet, direction: [bool], threeProfileSpecifics)
                 roseWineNum -= 1
             }
         }
