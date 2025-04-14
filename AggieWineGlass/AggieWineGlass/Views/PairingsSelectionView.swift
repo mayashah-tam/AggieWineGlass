@@ -13,7 +13,7 @@ struct PairingsSelectionView: View {
 
     @StateObject private var viewModel: PairingSelectionViewModel
     @State private var showPairings = false
-    @State private var showFlavorProfileSelection = false
+    @State private var showPersonalizationSelection = false
 
     init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
         _viewModel = StateObject(wrappedValue:
@@ -87,7 +87,7 @@ struct PairingsSelectionView: View {
             }
 
             Button("Next") {
-                showFlavorProfileSelection = true
+                showPersonalizationSelection = true
             }
             .font(.title2)
             .padding()
@@ -101,10 +101,9 @@ struct PairingsSelectionView: View {
         .onAppear {
             print("Unique Pairings: \(wineDataInfo.uniquePairings)")
         }
-        .navigationDestination(isPresented: $showFlavorProfileSelection) {
-            FlavorProfileSelectionView(
-                preferences: preferences,
-                wineDataInfo: wineDataInfo
+        .navigationDestination(isPresented: $showPersonalizationSelection) {
+            PersonalizationSelectionView(
+                preferences: preferences
             )
         }
     }
