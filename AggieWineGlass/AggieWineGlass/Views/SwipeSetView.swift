@@ -36,7 +36,7 @@ struct SwipeSetView: View {
                     viewModel.setSwipeSets()
                     //viewModel.wineCBF(filterCategories: ["Red wine"])
                     //viewModel.findScaleWineRandom(filterCategories: ["Red wine"])
-                    viewModel.findFlavorWineRandom(filterCategories: ["Red wine"])
+                    //viewModel.findFlavorWineRandom(filterCategories: ["Red wine"])
                     //viewModel.createMiniSet(filterCategory: "Red wine")
                     //viewModel2.recommendationRanking()
                 }

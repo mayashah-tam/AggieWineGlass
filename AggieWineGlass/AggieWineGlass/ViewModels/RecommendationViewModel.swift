@@ -17,7 +17,7 @@ class RecommendationViewModel: ObservableObject {
         self.preferences = preferences
     }
     
-    func wineCBF(filterCategories: Set<String>, filterRegionClass: Set<String>) -> [Wine] {
+    private func wineCBF(filterCategories: Set<String>, filterRegionClass: Set<String>) -> [Wine] {
         let filteredCBFWines = wineDataInfo.wines.filter { wine in
 
             let matchCategory = filterCategories.contains(wine.category)
@@ -41,7 +41,7 @@ class RecommendationViewModel: ObservableObject {
         return filteredCBFWines
     }
     
-    func weightedCosineSimilarity(wineScaleValues: [Double], userScalePrefs: [Double]) -> Double {
+    private func weightedCosineSimilarity(wineScaleValues: [Double], userScalePrefs: [Double]) -> Double {
         let weights: [Double] = [0.20, 0.20, 0.30, 0.20, 0.10]
 
         let weightedWine = zip(weights, wineScaleValues).map(*)
@@ -56,7 +56,7 @@ class RecommendationViewModel: ObservableObject {
         return denominator != 0 ? dotProduct / denominator : 0.0
     }
 
-    func weightedJaccardSimiliarity(wineAttributeList: [String], userAttributeNums: [String: Double], attribute: String) -> Double {
+    private func weightedJaccardSimiliarity(wineAttributeList: [String], userAttributeNums: [String: Double], attribute: String) -> Double {
         
         let vector = userAttributeNums.values
         let magnitude = sqrt(vector.map { $0 * $0 }.reduce(0, +))

@@ -55,7 +55,7 @@ struct PersonalizationSelectionView: View {
         }
         .padding()
         .navigationDestination(isPresented: $showSwipeSetView) {
-            SwipeSetView(preferences: preferences, wineDataInfo: wineDataInfo)
+            ContentView(preferences: preferences, wineDataInfo: wineDataInfo)
         }
     }
 }

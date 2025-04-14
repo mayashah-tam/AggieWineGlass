@@ -12,7 +12,7 @@ struct FlavorProfileSelectionView: View {
     @EnvironmentObject var wineDataInfo: WineDataInfo
 
     @StateObject private var viewModel: FlavorProfileSelectionViewModel
-    @State private var showPersonalizationSelection = false
+    @State private var showRegionsSelection = false
 
     init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
         _viewModel = StateObject(wrappedValue:
@@ -61,7 +61,7 @@ struct FlavorProfileSelectionView: View {
 
                 Button("Next") {
                     viewModel.setProfileSpecifics()
-                    showPersonalizationSelection = true
+                    showRegionsSelection = true
                 }
                 .font(.title2)
                 .padding()
@@ -76,9 +76,10 @@ struct FlavorProfileSelectionView: View {
         .onAppear {
             print("Unique Flavor Profiles: \(wineDataInfo.uniqueFlavorProfiles)")
         }
-        .navigationDestination(isPresented: $showPersonalizationSelection) {
-            PersonalizationSelectionView(
-                preferences: preferences
+        .navigationDestination(isPresented: $showRegionsSelection) {
+            RegionsSelectionView(
+                preferences: preferences,
+                wineDataInfo: wineDataInfo
             )
         }
     }
