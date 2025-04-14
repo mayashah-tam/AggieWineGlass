@@ -1,6 +1,6 @@
 
 \documentclass{article} % For LaTeX2e
-\usepackage[submission]{colm2025_conference}
+\usepackage[final]{colm2025_conference}
 
 \usepackage{microtype}
 \usepackage{hyperref}
@@ -13,30 +13,16 @@
 \hypersetup{colorlinks=true, citecolor=darkblue, linkcolor=darkblue, urlcolor=darkblue}
 
 
-\title{Formatting Instructions for COLM 2025 \\ Conference Submissions}
+\title{Aggie Wine Glass: A By-The-Glass Wine Finder and \\ Recommendation System}
 
 % Authors must not appear in the submitted version. They should be hidden
 % as long as the \colmfinalcopy macro remains commented out below.
 % Non-anonymous submissions will be rejected without review.
 
-\author{Antiquus S.~Hippocampus, Natalia Cerebro \& Amelie P. Amygdale \thanks{ Use footnote for providing further information
-about author (webpage, alternative address)---\emph{not} for acknowledging
-funding agencies.  Funding acknowledgements go at the end of the paper.} \\
+\author{Maya Shah, Ariela Mitrani \& Gabriel Wild\\
 Department of Computer Science\\
-Cranberry-Lemon University\\
-Pittsburgh, PA 15213, USA \\
-\texttt{\{hippo,brain,jen\}@cs.cranberry-lemon.edu} \\
-\And
-Ji Q. Ren \& Yevgeny LeNet \\
-Department of Computational Neuroscience \\
-University of the Witwatersrand \\
-Joburg, South Africa \\
-\texttt{\{robot,net\}@wits.ac.za} \\
-\AND
-Coauthor \\
-Affiliation \\
-Address \\
-\texttt{email}
+Texas A\&M University\\
+College Station, TX 77840, USA \\
 }
 
 % The \author macro works with any number of authors. There are two commands
@@ -59,12 +45,33 @@ Address \\
 \maketitle
 
 \begin{abstract}
-The abstract paragraph should be indented 1/2~inch (3~picas) on both left and
-right-hand margins. Use 10~point type, with a vertical spacing of 11~points.
-The word \textit{Abstract} must be centered and in point size 12. Two
-line spaces precede the abstract. The abstract must be limited to one
-paragraph.
+
+Aggie Wine Glass helps Texas A\&M students discover local restaurants and bars that serve wines matching their preferences by the glass. Based on user-inputted taste preferences, pairing requests, and other factors, our recommendation tool provides a curated list of nearby establishments where these wines are available, making wine tasting more accessible and budget-friendly for students. This tool allows users to draw from over 400 by-the-glass wine options in College Station in order to identify places to try new wines without buying bottles. It also helps recommend wines based on existing ratings for the bottles online, and is integrated with LLMs at various steps to give more tailored/specific recommendations.
+
 \end{abstract}
+
+\section{Motivation}
+
+For many college students looking to explore the world of wine tasting, it can be challenging to find local tasting opportunities or try new wines without committing to an entire bottle. Aggie Wine Glass solves this problem by combining a database of wines and their key attributes with an understanding of college student budgets and local availability. Our tool helps Texas A\&M students discover by-the-glass wine options at nearby venues in Bryan-College Station, making wine tasting more accessible, affordable, and convenient. Currently, there are no existing tools that exist to find by-the-glass wine options, so this is fixing a big gap in the market. Similar tools do exist, but not with the specific functionality we provide. Many websites exist to help locate stores to buy wine bottles, and many list important characteristics of the wine such as grape variety, region, and flavor profile. Vivino, for example, is a well-known website and app that allows users to filter wines based on various attributes, leave reviews, and even purchase bottles. However, it does not help users find restaurants or bars where they can try wines by the glass, nor does it allow for filtering top wine lists for specific cities. While our app has some similar features to existing technologies, the main goal is to provide a way for users to find wine tasting recommendations in their area without having to manually scour different restaurant menus. 
+
+\section{Data Collection}
+
+Before we started this project, we identified that building the database of local wines would be the most difficult part of our implementation. In order to have a high-performing system, we needed to compile a sizable number of different wines and many different characteristics of each of these wines. While we searched for an existing wine API to gather information about the wines offered at local restaurants, we did not find a publicly available API we could use, and thus had to create our own web scraper. Creating the database was a two step process: Collecting a list of restaurants, their wines and their prices, and  extracting the characteristics of each wine.
+
+\subsection{Menu Processing}
+
+The first part of the database building process was finding restaurants that had by-the-glass wine offerings, and then processing the information from their menus into a standardized format with the wine name, restaurant name, and glass price. The first obstacle was that not every restaurant in College Station with wine offerings had an online menu. Because of this, we did ground research and physically went to take photos of wine lists for the restaurants that did not have their wine menus posted online. 
+
+From here, we had to extract the relevant information from the menus and put it into a Google Sheet. While this can be done manually by copy-pasting the wine name and the price, this would be incredibly inefficient, especially with over 400 wines from more than 20 different websites. Instead, these menus were copy pasted into ChatGPT, who then outputted the wines and their prices in a table format. This data still had to be manually revised and occasionally changed due to errors in ChatGPT's processing, but using an LLM for this preprocessing step sped up the process exponentially.
+
+An important trend we discovered during this step was that many local restaurants offered the same wine. However, the labeling convention on wine menus differed. In order to make sure that our system recognized these wines as the same wine, we used wine IDs to identify when two wines were the same, regardless of naming convention. The details of this ID and the other wine information follow in the next section.
+
+\subsection{Vivino Data Collection}
+
+The second half of the database building involved getting information about the wine characteristics. For each wine, we extracted the following data points: Bottle Price, Winery, Year, Wine Style, Region, Grape Varieties,	ABV,	Dry/Sweet	 Rating, Tannin Rating, Soft/Acidic Rating, Flavor Profile, Pairings, Rating,	 Category, Light/Bold	 Rating, Profile Specifics, Fizziness, Country, and Wine ID. To get these characteristics, we used Vivino as our base. Vivino is a wine database that has information on a large variety of different wines, as well as user ratings. 
+
+\subsection{Drawbacks and Challenges}
+menus change, vivino sucks, gemini hallucinates, scraper is not perfect
 
 \section{Submission of conference papers to COLM 2025}
 
