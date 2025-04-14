@@ -35,15 +35,21 @@ class SwipeSetViewModel: ObservableObject {
                 redWineSets = 1
                 whiteWineSets = 1
                 sparklingWineSets = 1
-            } else if (preferences.categories.contains("Red wine")) {
-                redWineSets = 2
-            } else if (preferences.categories.contains("White wine")) {
-                whiteWineSets = 2
-            } else if (preferences.categories.contains("Sparkling wine")) {
-                sparklingWineSets = 1
-            } else if (preferences.categories.contains("Dessert wine")) {
+            } else {
+                if (preferences.categories.contains("Red wine")) {
+                    redWineSets = 2
+                }
+                if (preferences.categories.contains("White wine")) {
+                    whiteWineSets = 2
+                }
+                if (preferences.categories.contains("Sparkling wine")) {
+                    sparklingWineSets = 1
+                }
+            }
+            if (preferences.categories.contains("Dessert wine")) {
                 dessertWineNum = 1
-            } else if (preferences.categories.contains("Rose wine")) {
+            }
+            if (preferences.categories.contains("Rose wine")) {
                 roseWineNum = 2
             }
         } else if (preferences.highPersonalization) {
@@ -66,9 +72,11 @@ class SwipeSetViewModel: ObservableObject {
                 whiteWineSets = 5
             } else if (preferences.categories.contains("Sparkling wine")) {
                 sparklingWineSets = 2
-            } else if (preferences.categories.contains("Rose wine")) {
+            }
+            if (preferences.categories.contains("Rose wine")) {
                 roseWineNum = 3
-            } else if (preferences.categories.contains("Dessert wine")) {
+            }
+            if (preferences.categories.contains("Dessert wine")) {
                 dessertWineNum = 2
             }
         }
