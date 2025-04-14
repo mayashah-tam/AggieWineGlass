@@ -32,11 +32,8 @@ struct CategorySelectionView: View {
         ZStack {
             Color("PrimaryColor").ignoresSafeArea()
 
-            VStack {
-                Text("Select Categories:")
-                    .font(.custom("Oswald-Regular", size: 32))
-                    .foregroundColor(.white)
-                    .padding()
+            VStack(spacing: 20) {
+                SectionTitleView(text: "Select Categories")
 
                 if wineDataInfo.uniqueCategories.isEmpty {
                     Text("Loading categories...")

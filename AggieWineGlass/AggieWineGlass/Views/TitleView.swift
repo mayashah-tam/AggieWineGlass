@@ -64,3 +64,16 @@ struct TitleView: View {
         }
     }
 }
+
+struct SectionTitleView: View {
+    var text: String
+
+    var body: some View {
+        Text(text)
+            .font(.custom("Oswald-Regular", size: 34))
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .padding(.top, 32)
+            .padding(.horizontal)
+    }
+}

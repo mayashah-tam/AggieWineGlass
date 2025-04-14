@@ -23,54 +23,68 @@ struct SliderScalesView: View {
     }
 
     var body: some View {
-        VStack {
-            Slider(value: $viewModel.preferences.drySweetScale, in: 1...5, step: 1)
-                .padding()
-                .onChange(of: viewModel.preferences.drySweetScale) {
-                    viewModel.updateDrySweetScale()
-                }
-            Text("Dry/Sweet Scale: \(Int(viewModel.preferences.drySweetScale))")
+        ZStack {
+            Color("PrimaryColor").ignoresSafeArea()
 
-            Slider(value: $viewModel.preferences.tanninScale, in: 1...5, step: 1)
-                .padding()
-                .onChange(of: viewModel.preferences.tanninScale) {
-                    viewModel.updateTanninScale()
-                }
-            Text("Tannin Scale: \(Int(viewModel.preferences.tanninScale))")
+            VStack(spacing: 20) {
+                SectionTitleView(text: "Adjust Your Taste Preferences")
+                
+                Spacer()
 
-            Slider(value: $viewModel.preferences.softAcidityScale, in: 1...5, step: 1)
-                .padding()
-                .onChange(of: viewModel.preferences.softAcidityScale) {
-                    viewModel.updateSoftAcidityScale()
-                }
-            Text("Soft Acidity Scale: \(Int(viewModel.preferences.softAcidityScale))")
+                Group {
+                    SliderView(
+                        value: $viewModel.preferences.drySweetScale,
+                        label: "Dry/Sweet",
+                        range: 1...5,
+                        update: viewModel.updateDrySweetScale
+                    )
 
-            Slider(value: $viewModel.preferences.lightBoldScale, in: 1...5, step: 1)
-                .padding()
-                .onChange(of: viewModel.preferences.lightBoldScale) {
-                    viewModel.updateLightBoldScale()
-                }
-            Text("Light/Bold Scale: \(Int(viewModel.preferences.lightBoldScale))")
+                    SliderView(
+                        value: $viewModel.preferences.tanninScale,
+                        label: "Tannin",
+                        range: 1...5,
+                        update: viewModel.updateTanninScale
+                    )
 
-            Slider(value: $viewModel.preferences.fizzinessScale, in: 0...5, step: 1)
-                .padding()
-                .onChange(of: viewModel.preferences.fizzinessScale) {
-                    viewModel.updateFizzinessScale()
-                }
-            Text("Fizziness Scale: \(Int(viewModel.preferences.fizzinessScale))")
+                    SliderView(
+                        value: $viewModel.preferences.softAcidityScale,
+                        label: "Acidity",
+                        range: 1...5,
+                        update: viewModel.updateSoftAcidityScale
+                    )
 
-            Button("Next") {
-                showPairingsSelection = true
+                    SliderView(
+                        value: $viewModel.preferences.lightBoldScale,
+                        label: "Light/Bold",
+                        range: 1...5,
+                        update: viewModel.updateLightBoldScale
+                    )
+
+                    SliderView(
+                        value: $viewModel.preferences.fizzinessScale,
+                        label: "Fizziness",
+                        range: 0...5,
+                        update: viewModel.updateFizzinessScale
+                    )
+                }
+                
+                Spacer()
+
+                Button(action: {
+                    showPairingsSelection = true
+                }) {
+                    Text("Next")
+                        .font(.custom("Oswald-Regular", size: 18))
+                        .foregroundColor(Color("PrimaryColor"))
+                        .padding(.horizontal, 30)
+                        .padding(.vertical, 12)
+                        .background(Color.white)
+                        .cornerRadius(12)
+                }
+                .padding(.top, 20)
             }
-            .font(.title2)
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(Color.accentColor)
-            .foregroundColor(.white)
-            .cornerRadius(10)
-            .padding(.top)
+            .frame(maxHeight: .infinity, alignment: .top)
         }
-        .padding()
         .onAppear {
             viewModel.updateDrySweetScale()
             viewModel.updateTanninScale()
@@ -84,5 +98,27 @@ struct SliderScalesView: View {
                 wineDataInfo: wineDataInfo
             )
         }
+    }
+}
+
+private struct SliderView: View {
+    @Binding var value: Double
+    var label: String
+    var range: ClosedRange<Double>
+    var update: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("\(label): \(Int(value))")
+                .foregroundColor(.white)
+                .font(.headline)
+
+            Slider(value: $value, in: range, step: 1)
+                .accentColor(.white)
+                .onChange(of: value) {
+                    update()
+                }
+        }
+        .padding(.horizontal)
     }
 }
