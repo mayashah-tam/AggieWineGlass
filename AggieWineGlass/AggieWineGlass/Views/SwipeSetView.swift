@@ -33,7 +33,7 @@ struct SwipeSetView: View {
                 .padding()
 
                 .onAppear() {
-                    viewModel.setSwipeSets()
+                    // viewModel.setSwipeSets()
                     //viewModel.wineCBF(filterCategories: ["Red wine"])
                     //viewModel.findScaleWineRandom(filterCategories: ["Red wine"])
                     //viewModel.findFlavorWineRandom(filterCategories: ["Red wine"])

@@ -19,6 +19,7 @@ struct ContentView: View {
     // MARK: Variables for Swiping Through Cards
     @State private var currentMiniSet: [Wine] = []
     @State private var swipeResults: [CardView.SwipeDirection] = []
+    @State private var selectedProfileSet: [[String]] = []
     @State private var isLoading = false
     @State private var isSwipeReady = false
 
@@ -42,11 +43,13 @@ struct ContentView: View {
                     ProgressView("Loading next wines...")
                         .foregroundColor(.white)
                 } else if isSwipeReady {
-                    SwipeableCardsView(wines: currentMiniSet) { swipeDirections in
-                        swipeResults = swipeDirections
+                    SwipeableCardsView(wines: currentMiniSet) { swipedModels in
+                        swipeResults = swipedModels.map { $0.swipeDirection }
+                        selectedProfileSet = swipedModels.map { $0.selectedProfileSpecifics }
                         isSwipeReady = false
                         onMiniSetSwiped()
                     }
+
                     .transition(.opacity)
                 }
             } else {
@@ -113,14 +116,12 @@ struct ContentView: View {
                 miniSet = viewModel.createMiniSet(filterCategory: "Sparkling wine")
                 viewModel.sparklingWineSets -= 1
             } else if viewModel.dessertWineNum > 0 {
-                if let wine = viewModel.findCategoryWineRandom(filterCategories: ["Dessert wine"]) {
-                    miniSet = [wine]
-                }
+                let wine = viewModel.findCategoryWineRandom(filterCategories: ["Dessert wine"])
+                miniSet = [wine]
                 viewModel.dessertWineNum -= 1
             } else if viewModel.roseWineNum > 0 {
-                if let wine = viewModel.findCategoryWineRandom(filterCategories: ["Rosé wine"]) {
-                    miniSet = [wine]
-                }
+                let wine = viewModel.findCategoryWineRandom(filterCategories: ["Rosé wine"])
+                miniSet = [wine]
                 viewModel.roseWineNum -= 1
             }
 
@@ -136,7 +137,7 @@ struct ContentView: View {
         viewModel.miniSetUpdate(
             miniSet: currentMiniSet,
             direction: swipeResults,
-            threeProfileSpecifics: ["Tannin", "Sweetness", "Acidity"]
+            threeProfileSpecifics: selectedProfileSet
         )
 
         if !setsRemaining() {
@@ -164,7 +165,13 @@ struct CardView: View {
     struct Model: Identifiable {
         let id = UUID()
         let wine: Wine
+        let selectedProfileSpecifics: [String]
         var swipeDirection: SwipeDirection = .none
+        
+        init(wine: Wine) {
+            self.wine = wine
+            self.selectedProfileSpecifics = Array(wine.profileSpecifics.shuffled().prefix(3))
+        }
     }
 
     var model: Model
@@ -174,14 +181,36 @@ struct CardView: View {
     var isSecondCard: Bool
 
     var body: some View {
-        VStack(spacing: 10) {
-            Text(model.wine.nameOnMenu)
-                .font(.title)
-            Text(model.wine.description)
-                .font(.subheadline)
-            Text(model.wine.region)
-                .font(.subheadline)
+        let wine = model.wine
+        let selectedProfiles = model.selectedProfileSpecifics
+
+        return VStack(alignment: .leading, spacing: 12) {
+            Text(wine.category)
+                .font(.headline)
+                .textCase(.uppercase)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Dry/Sweet: \(wine.drySweet, specifier: "%.1f")")
+                Text("Tannin: \(wine.tannin, specifier: "%.1f")")
+                Text("Soft/Acidic: \(wine.softAcidic, specifier: "%.1f")")
+                Text("Light/Bold: \(wine.lightBold, specifier: "%.1f")")
+                Text("Fizziness: \(wine.fizziness, specifier: "%.1f")")
+            }
+            .font(.subheadline)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Profile Highlights:")
+                    .font(.subheadline)
+                    .bold()
+                ForEach(selectedProfiles, id: \.self) { profile in
+                    Text("• \(profile)")
+                        .font(.footnote)
+                }
+            }
+
+            Spacer()
         }
+        .padding()
         .frame(width: size.width * 0.8, height: size.height * 0.8)
         .background(Color("PrimaryColor"))
         .cornerRadius(15)
@@ -247,9 +276,9 @@ struct SwipeableCardsView: View {
     private let swipeThreshold: CGFloat = 100.0
     private let rotationFactor: Double = 35.0
 
-    var action: ([CardView.SwipeDirection]) -> Void
+    var action: ([CardView.Model]) -> Void
 
-    init(wines: [Wine], action: @escaping ([CardView.SwipeDirection]) -> Void) {
+    init(wines: [Wine], action: @escaping ([CardView.Model]) -> Void) {
         let cardModels = wines.map { CardView.Model(wine: $0) }
         _model = StateObject(wrappedValue: Model(cards: cardModels))
         self.action = action
@@ -260,8 +289,7 @@ struct SwipeableCardsView: View {
             if model.unswipedCards.isEmpty {
                 Color.clear
                     .onAppear {
-                        let directions = model.swipedCards.map { $0.swipeDirection }
-                        action(directions)
+                        action(model.swipedCards)
                     }
             } else {
                 ZStack {

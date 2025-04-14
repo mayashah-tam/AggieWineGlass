@@ -27,7 +27,7 @@ class SwipeSetViewModel: ObservableObject {
         roseWineNum = 0
     }
     
-    private func setSwipeSets() {
+    func setSwipeSets() {
         if (!preferences.highPersonalization) {
             if (preferences.categories.contains("Red wine") && preferences.categories.contains("White wine") && preferences.categories.contains("Sparkling wine")) {
                 redWineSets = 1
@@ -47,7 +47,7 @@ class SwipeSetViewModel: ObservableObject {
             if (preferences.categories.contains("Dessert wine")) {
                 dessertWineNum = 1
             }
-            if (preferences.categories.contains("Rose wine")) {
+            if (preferences.categories.contains("Rosé wine")) {
                 roseWineNum = 2
             }
         } else if (preferences.highPersonalization) {
@@ -71,7 +71,7 @@ class SwipeSetViewModel: ObservableObject {
             } else if (preferences.categories.contains("Sparkling wine")) {
                 sparklingWineSets = 2
             }
-            if (preferences.categories.contains("Rose wine")) {
+            if (preferences.categories.contains("Rosé wine")) {
                 roseWineNum = 3
             }
             if (preferences.categories.contains("Dessert wine")) {
@@ -262,7 +262,17 @@ class SwipeSetViewModel: ObservableObject {
         return miniSet
     }
     
-    func miniSetUpdate(miniSet: [Wine], direction: [CardView.SwipeDirection], threeProfileSpecifics: [String]) {
-        //TODO
+    func miniSetUpdate(miniSet: [Wine], direction: [CardView.SwipeDirection], threeProfileSpecifics: [[String]]) {
+        for (index, wine) in miniSet.enumerated() {
+            let swipe = index < direction.count ? direction[index] : .none
+            let profiles = index < threeProfileSpecifics.count ? threeProfileSpecifics[index] : []
+
+            print("🍷 Wine: \(wine.nameOnMenu)")
+            print("➡️ Swipe: \(swipe)")
+            print("📊 Profiles: \(profiles.joined(separator: ", "))")
+            print("---")
+        }
+
     }
+
 }
