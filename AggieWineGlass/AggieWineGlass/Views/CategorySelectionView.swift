@@ -91,7 +91,7 @@ struct CategorySelectionView: View {
                         Button(action: {
                             viewModel.clearAllSelections()
                         }) {
-                            Text("Clear")
+                            Text("Clear All")
                                 .font(.custom("Oswald-Regular", size: 16))
                                 .foregroundColor(Color("PrimaryColor"))
                                 .padding(.horizontal, 20)

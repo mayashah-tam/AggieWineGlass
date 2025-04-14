@@ -26,7 +26,7 @@ struct TitleView: View {
                         Image("TAMULogo")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 150, height: 150)
+                            .frame(width: 200, height: 200)
 
                         Text("Aggie Wine Glass")
                             .font(.custom("Oswald-Regular", size: 36))
@@ -42,7 +42,7 @@ struct TitleView: View {
                         }
                     }) {
                         Text("Start")
-                            .font(.title2)
+                            .font(.custom("Oswald-Regular", size: 24))
                             .foregroundColor(Color("PrimaryColor"))
                             .padding()
                             .padding(.horizontal, 20)
