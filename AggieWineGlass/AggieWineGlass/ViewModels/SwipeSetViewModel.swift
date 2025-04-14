@@ -27,21 +27,27 @@ class SwipeSetViewModel: ObservableObject {
         roseWineNum = 0
     }
     
-    func setSwipeSets() {
+    private func setSwipeSets() {
         if (!preferences.highPersonalization) {
             if (preferences.categories.contains("Red wine") && preferences.categories.contains("White wine") && preferences.categories.contains("Sparkling wine")) {
                 redWineSets = 1
                 whiteWineSets = 1
                 sparklingWineSets = 1
-            } else if (preferences.categories.contains("Red wine")) {
-                redWineSets = 2
-            } else if (preferences.categories.contains("White wine")) {
-                whiteWineSets = 2
-            } else if (preferences.categories.contains("Sparkling wine")) {
-                sparklingWineSets = 1
-            } else if (preferences.categories.contains("Dessert wine")) {
+            } else {
+                if (preferences.categories.contains("Red wine")) {
+                    redWineSets = 2
+                }
+                if (preferences.categories.contains("White wine")) {
+                    whiteWineSets = 2
+                }
+                if (preferences.categories.contains("Sparkling wine")) {
+                    sparklingWineSets = 1
+                }
+            }
+            if (preferences.categories.contains("Dessert wine")) {
                 dessertWineNum = 1
-            } else if (preferences.categories.contains("Rose wine")) {
+            }
+            if (preferences.categories.contains("Rose wine")) {
                 roseWineNum = 2
             }
         } else if (preferences.highPersonalization) {
@@ -64,9 +70,11 @@ class SwipeSetViewModel: ObservableObject {
                 whiteWineSets = 5
             } else if (preferences.categories.contains("Sparkling wine")) {
                 sparklingWineSets = 2
-            } else if (preferences.categories.contains("Rose wine")) {
+            }
+            if (preferences.categories.contains("Rose wine")) {
                 roseWineNum = 3
-            } else if (preferences.categories.contains("Dessert wine")) {
+            }
+            if (preferences.categories.contains("Dessert wine")) {
                 dessertWineNum = 2
             }
         }
@@ -175,24 +183,26 @@ class SwipeSetViewModel: ObservableObject {
     
     private func findScaleWineRandom(filterCategories: [String], filterRegionClass: Set<String>) -> Wine? {
         let scaleWineResults = wineCBF(filterCategories: filterCategories, filterRegionClass: filterRegionClass)
-        var scaleWineCosineScores: [String: Double] = [:]
-        let userScalePreferences = [preferences.drySweetScale, preferences.tanninScale, preferences.softAcidityScale, preferences.lightBoldScale, preferences.fizzinessScale]
-        
-        for wine in scaleWineResults {
-            let wineScaleValues = [wine.drySweet, wine.tannin, wine.softAcidic, wine.lightBold, wine.fizziness]
+        if (!scaleWineResults.isEmpty) {
+            var scaleWineCosineScores: [String: Double] = [:]
+            let userScalePreferences = [preferences.drySweetScale, preferences.tanninScale, preferences.softAcidityScale, preferences.lightBoldScale, preferences.fizzinessScale]
             
-            let similarityScore = weightedCosineSimilarity(wineScaleValues: wineScaleValues, userScalePrefs: userScalePreferences)
+            for wine in scaleWineResults {
+                let wineScaleValues = [wine.drySweet, wine.tannin, wine.softAcidic, wine.lightBold, wine.fizziness]
+                
+                let similarityScore = weightedCosineSimilarity(wineScaleValues: wineScaleValues, userScalePrefs: userScalePreferences)
+                
+                scaleWineCosineScores[wine.id] = similarityScore
+            }
             
-            scaleWineCosineScores[wine.id] = similarityScore
-        }
-        
-        let sortedScaleWineList = scaleWineCosineScores
-            .sorted(by: { $0.value > $1.value })
-            .prefix(20)
-        
-        if let randomEntry = sortedScaleWineList.randomElement(),
-           let selectedWine = scaleWineResults.first(where: { $0.id == randomEntry.key }) {
-            return selectedWine
+            let sortedScaleWineList = scaleWineCosineScores
+                .sorted(by: { $0.value > $1.value })
+                .prefix(20)
+            
+            if let randomEntry = sortedScaleWineList.randomElement(),
+               let selectedWine = scaleWineResults.first(where: { $0.id == randomEntry.key }) {
+                return selectedWine
+            }
         }
         return nil
     }
@@ -224,27 +234,31 @@ class SwipeSetViewModel: ObservableObject {
         return nil
     }
     
-    func findCategoryWineRandom(filterCategories: [String]) -> Wine? {
+    func findCategoryWineRandom(filterCategories: [String]) -> Wine {
         let filteredCategoryWines = wineDataInfo.wines.filter { wine in
             let matchCategory = filterCategories.contains(wine.category)
             return matchCategory
             }
         
-        return filteredCategoryWines.randomElement()
+        if let randomCategoryWine = filteredCategoryWines.randomElement() {
+            return randomCategoryWine
+        }
+        return wineDataInfo.wines.randomElement()!
     }
     
     func createMiniSet(filterCategory: String) -> [Wine] {
         var miniSet: [Wine] = []
         
-        let scaleWineRandom = (findScaleWineRandom(filterCategories: [filterCategory], filterRegionClass: preferences.regionClasses) ?? nil)!
-        miniSet.append(scaleWineRandom)
+        let scaleWineRandom = findScaleWineRandom(filterCategories: [filterCategory], filterRegionClass: preferences.regionClasses)
+        miniSet.append(scaleWineRandom ?? findCategoryWineRandom(filterCategories: [filterCategory]))
         
-        let flavorWineRandom = (findFlavorWineRandom(filterCategories: [filterCategory]) ?? nil)!
-        miniSet.append(flavorWineRandom)
+        let flavorWineRandom = findFlavorWineRandom(filterCategories: [filterCategory])
+        miniSet.append(flavorWineRandom ?? findCategoryWineRandom(filterCategories: [filterCategory]))
         
-        let categoryWineRandom = (findCategoryWineRandom(filterCategories: [filterCategory]) ?? nil)!
+        let categoryWineRandom = findCategoryWineRandom(filterCategories: [filterCategory])
         miniSet.append(categoryWineRandom)
         
+        print(miniSet)
         return miniSet
     }
     
