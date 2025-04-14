@@ -40,9 +40,12 @@ struct AggieWineGlassApp: App {
     
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .environmentObject(preferences)
-                .environmentObject(wineDataInfo)
+            NavigationStack {
+                TitleView()
+            }
+            .accentColor(.white)
+            .environmentObject(preferences)
+            .environmentObject(wineDataInfo)
         }
     }
 }

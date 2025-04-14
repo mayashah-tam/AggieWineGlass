@@ -56,7 +56,6 @@ struct PersonalizationSelectionView: View {
         .padding()
         .navigationDestination(isPresented: $showSwipeSetView) {
             SwipeView(preferences: preferences, wineDataInfo: wineDataInfo)
-                .navigationBarBackButtonHidden(true)
         }
     }
 }

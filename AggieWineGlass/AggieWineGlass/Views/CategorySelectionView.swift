@@ -24,61 +24,105 @@ struct CategorySelectionView: View {
     }
 
     var body: some View {
-        VStack {
-            Text("Select Categories:")
-                .font(.headline)
-                .padding()
+        let columns = [
+            GridItem(.flexible()),
+            GridItem(.flexible())
+        ]
 
-            if wineDataInfo.uniqueCategories.isEmpty {
-                Text("Loading categories...")
+        ZStack {
+            Color("PrimaryColor").ignoresSafeArea()
+
+            VStack {
+                Text("Select Categories:")
+                    .font(.custom("Oswald-Regular", size: 32))
+                    .foregroundColor(.white)
                     .padding()
-            } else {
-                List(wineDataInfo.uniqueCategories.sorted(), id: \.self) { category in
-                    Button(action: {
-                        viewModel.toggleCategorySelection(category: category)
-                    }) {
-                        HStack {
-                            Image(systemName: preferences.categories.contains(category) ? "checkmark.square" : "square")
-                                .foregroundColor(.blue)
-                            Text(category)
-                                .foregroundColor(.primary)
+
+                if wineDataInfo.uniqueCategories.isEmpty {
+                    Text("Loading categories...")
+                        .foregroundColor(.white)
+                        .padding()
+                } else {
+                    LazyVGrid(columns: columns, spacing: 20) {
+                        ForEach(wineDataInfo.uniqueCategories.sorted(), id: \.self) { category in
+                            let isSelected = preferences.categories.contains(category)
+
+                            Button(action: {
+                                viewModel.toggleCategorySelection(category: category)
+                            }) {
+                                VStack {
+                                    Image(category.capitalized)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 80, height: 80)
+
+                                    Text(category.capitalized)
+                                        .font(.caption)
+                                        .foregroundColor(.white)
+                                        .padding(.top, 4)
+                                }
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(isSelected ? Color.white.opacity(0.2) : Color.clear)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.white, lineWidth: 1)
+                                )
+                                .cornerRadius(12)
+                            }
+                            .buttonStyle(PlainButtonStyle())
                         }
                     }
-                    .buttonStyle(PlainButtonStyle())
-                }
+                    .padding(.top)
 
-                Button("Select All Categories") {
-                    viewModel.selectAllCategories()
-                }
-                .foregroundColor(.blue)
-                .padding()
+                    HStack(spacing: 16) {
+                        Button(action: {
+                            viewModel.selectAllCategories()
+                        }) {
+                            Text("Select All")
+                                .font(.custom("Oswald-Regular", size: 16))
+                                .foregroundColor(Color("PrimaryColor"))
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 10)
+                                .background(Color.white)
+                                .cornerRadius(10)
+                        }
 
-                Button("Clear Selections") {
-                    viewModel.clearAllSelections()
-                }
-                .foregroundColor(.red)
-                .padding()
+                        Button(action: {
+                            viewModel.clearAllSelections()
+                        }) {
+                            Text("Clear")
+                                .font(.custom("Oswald-Regular", size: 16))
+                                .foregroundColor(Color("PrimaryColor"))
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 10)
+                                .background(Color.white)
+                                .cornerRadius(10)
+                        }
+                    }
+                    .padding(.top, 10)
 
-                Button("Next") {
-                    showSliderScales = true
+                    Button(action: {
+                        showSliderScales = true
+                    }) {
+                        Text("Next")
+                            .font(.custom("Oswald-Regular", size: 18))
+                            .foregroundColor(Color("PrimaryColor"))
+                            .padding(.horizontal, 30)
+                            .padding(.vertical, 12)
+                            .background(Color.white)
+                            .cornerRadius(12)
+                    }
+                    .padding(.top, 20)
                 }
-                .font(.title2)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.accentColor)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-                .padding(.top)
             }
+            .padding()
         }
-        .padding()
         .onAppear {
             print("Unique Categories: \(wineDataInfo.uniqueCategories)")
         }
         .navigationDestination(isPresented: $showSliderScales) {
-            SliderScalesView(
-                preferences: preferences
-            )
+            SliderScalesView(preferences: preferences)
         }
     }
 }

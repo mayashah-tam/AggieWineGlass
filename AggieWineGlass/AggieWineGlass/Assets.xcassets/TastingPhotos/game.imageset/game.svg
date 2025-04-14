@@ -1,0 +1,15 @@
+<svg viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><g id="game">
+<g>
+<polyline fill="none" points="    15.2,16.5 19.7,12.5 20.6,9.8 22.4,5.9 21.8,2.7   " stroke="#B1845F" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"/>
+<polyline fill="none" points="18.8,2     19.3,7.4 20.6,9.8   " stroke="#B1845F" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"/>
+<line fill="none" stroke="#B1845F" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="15.2" x2="19.7" y1="9.8" y2="12.5"/>
+<line fill="none" stroke="#B1845F" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="19.1" x2="16.1" y1="5.5" y2="3.3"/>
+<polyline fill="none" points="    10.9,16.5 6.4,12.5 5.5,9.8 3.7,5.9 4.3,2.7   " stroke="#B1845F" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"/>
+<polyline fill="none" points="7.3,2     6.8,7.4 5.5,9.8   " stroke="#B1845F" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"/>
+<line fill="none" stroke="#B1845F" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="10.9" x2="6.4" y1="9.8" y2="12.5"/>
+<line fill="none" stroke="#B1845F" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="7" x2="10" y1="5.5" y2="3.3"/>
+<path d="M15.1,18.2    c0,2.7-0.9,5.8-2.1,5.8S11,20.9,11,18.2S15.1,15.5,15.1,18.2z" fill="none" stroke="#B1845F" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"/>
+<path d="M15.5,16.7    c0.9-0.5,2.3-0.4,2.3-0.4s-0.6,1.2-1.5,1.7S14.7,17.2,15.5,16.7z" fill="none" stroke="#B1845F" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"/>
+<path d="M10.5,16.7    c-0.9-0.5-2.3-0.4-2.3-0.4s0.6,1.2,1.5,1.7S11.4,17.2,10.5,16.7z" fill="none" stroke="#B1845F" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"/>
+</g>
+</g></svg>

@@ -42,6 +42,7 @@ struct SwipeView: View {
                 if isLoading {
                     ProgressView("Loading next wines...")
                         .foregroundColor(.white)
+                        .navigationBarBackButtonHidden(true)
                 } else if isSwipeReady {
                     SwipeableCardsView(wines: currentMiniSet) { swipedModels in
                         swipeResults = swipedModels.map { $0.swipeDirection }
@@ -49,8 +50,8 @@ struct SwipeView: View {
                         isSwipeReady = false
                         onMiniSetSwiped()
                     }
-
                     .transition(.opacity)
+                    .navigationBarBackButtonHidden(true)
                 }
             } else {
                 GeometryReader { geometry in
