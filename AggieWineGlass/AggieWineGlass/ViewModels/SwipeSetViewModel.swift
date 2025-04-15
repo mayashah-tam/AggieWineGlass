@@ -249,14 +249,52 @@ class SwipeSetViewModel: ObservableObject {
     func createMiniSet(filterCategory: String) -> [Wine] {
         var miniSet: [Wine] = []
         
-        let scaleWineRandom = findScaleWineRandom(filterCategories: [filterCategory], filterRegionClass: preferences.regionClasses)
-        miniSet.append(scaleWineRandom ?? findCategoryWineRandom(filterCategories: [filterCategory]))
+        var inSet = true
+        while (inSet) {
+            let scaleWineRandom = findScaleWineRandom(filterCategories: [filterCategory], filterRegionClass: preferences.regionClasses)
+            let wineIDs = miniSet.map { $0.id }
+            if let wine = scaleWineRandom {
+                if !wineIDs.contains(wine.id) {
+                    miniSet.append(wine)
+                    inSet = false
+                }
+            } else {
+                let alternativeWine = findCategoryWineRandom(filterCategories: [filterCategory])
+                if !wineIDs.contains(alternativeWine.id) {
+                    miniSet.append(alternativeWine)
+                    inSet = false
+                }
+            }
+        }
         
-        let flavorWineRandom = findFlavorWineRandom(filterCategories: [filterCategory])
-        miniSet.append(flavorWineRandom ?? findCategoryWineRandom(filterCategories: [filterCategory]))
+        inSet = true
+        while (inSet) {
+            let flavorWineRandom = findFlavorWineRandom(filterCategories: [filterCategory])
+            let wineIDs = miniSet.map { $0.id }
+            if let wine = flavorWineRandom {
+                if !wineIDs.contains(wine.id) {
+                    miniSet.append(wine)
+                    inSet = false
+                }
+            } else {
+                let alternativeWine = findCategoryWineRandom(filterCategories: [filterCategory])
+                if !wineIDs.contains(alternativeWine.id) {
+                    miniSet.append(alternativeWine)
+                    inSet = false
+                }
+            }
+        }
         
-        let categoryWineRandom = findCategoryWineRandom(filterCategories: [filterCategory])
-        miniSet.append(categoryWineRandom)
+        inSet = true
+        while (inSet) {
+            let categoryWineRandom = findCategoryWineRandom(filterCategories: [filterCategory])
+            let wineIDs = miniSet.map { $0.id }
+            if !wineIDs.contains(categoryWineRandom.id) {
+                miniSet.append(categoryWineRandom)
+                inSet = false
+            }
+        }
+        
         
         print(miniSet)
         return miniSet
@@ -282,7 +320,6 @@ class SwipeSetViewModel: ObservableObject {
 
         for (index, wine) in miniSet.enumerated() {
             let swipe = index < direction.count ? direction[index] : .none
-            let profiles = index < threeProfileSpecifics.count ? threeProfileSpecifics[index] : []
 
 //            print("🍷 Wine: \(wine.nameOnMenu)")
 //            print("Dry/Sweet: \(wine.drySweet)")
