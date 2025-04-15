@@ -113,7 +113,7 @@ class RecommendationViewModel: ObservableObject {
         }
     }
     
-    func recommendationRanking() {
+    func recommendationRanking() -> [(key: String, value: Double)] {
         let cbfWineResults = wineCBF(filterCategories: preferences.categories, filterRegionClass: preferences.regionClasses)
         
         var scaleWineCosineScores: [String: Double] = [:]
@@ -169,6 +169,15 @@ class RecommendationViewModel: ObservableObject {
         }
         
         let sortedWineList = totalWineScores.sorted { $0.value > $1.value }
-        // print(sortedWineList)
+        return sortedWineList
+    }
+    
+    func finalRecommendations(sortedWineScores: [(key: String, value: Double)]) -> [Wine] {
+        
+        var top3recs: [Wine] = []
+        for key in sortedWineScores.prefix(3) {
+            top3recs.append(wineDataInfo.wines.first(where: { $0.id == key.key })!)
+        }
+        return top3recs
     }
 }
