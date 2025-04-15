@@ -249,29 +249,186 @@ class SwipeSetViewModel: ObservableObject {
     func createMiniSet(filterCategory: String) -> [Wine] {
         var miniSet: [Wine] = []
         
-        let scaleWineRandom = findScaleWineRandom(filterCategories: [filterCategory], filterRegionClass: preferences.regionClasses)
-        miniSet.append(scaleWineRandom ?? findCategoryWineRandom(filterCategories: [filterCategory]))
+        var inSet = true
+        while (inSet) {
+            let scaleWineRandom = findScaleWineRandom(filterCategories: [filterCategory], filterRegionClass: preferences.regionClasses)
+            let wineIDs = miniSet.map { $0.id }
+            if let wine = scaleWineRandom {
+                if !wineIDs.contains(wine.id) {
+                    miniSet.append(wine)
+                    inSet = false
+                }
+            } else {
+                let alternativeWine = findCategoryWineRandom(filterCategories: [filterCategory])
+                if !wineIDs.contains(alternativeWine.id) {
+                    miniSet.append(alternativeWine)
+                    inSet = false
+                }
+            }
+        }
         
-        let flavorWineRandom = findFlavorWineRandom(filterCategories: [filterCategory])
-        miniSet.append(flavorWineRandom ?? findCategoryWineRandom(filterCategories: [filterCategory]))
+        inSet = true
+        while (inSet) {
+            let flavorWineRandom = findFlavorWineRandom(filterCategories: [filterCategory])
+            let wineIDs = miniSet.map { $0.id }
+            if let wine = flavorWineRandom {
+                if !wineIDs.contains(wine.id) {
+                    miniSet.append(wine)
+                    inSet = false
+                }
+            } else {
+                let alternativeWine = findCategoryWineRandom(filterCategories: [filterCategory])
+                if !wineIDs.contains(alternativeWine.id) {
+                    miniSet.append(alternativeWine)
+                    inSet = false
+                }
+            }
+        }
         
-        let categoryWineRandom = findCategoryWineRandom(filterCategories: [filterCategory])
-        miniSet.append(categoryWineRandom)
+        inSet = true
+        while (inSet) {
+            let categoryWineRandom = findCategoryWineRandom(filterCategories: [filterCategory])
+            let wineIDs = miniSet.map { $0.id }
+            if !wineIDs.contains(categoryWineRandom.id) {
+                miniSet.append(categoryWineRandom)
+                inSet = false
+            }
+        }
+        
         
         print(miniSet)
         return miniSet
     }
     
     func miniSetUpdate(miniSet: [Wine], direction: [CardView.SwipeDirection], threeProfileSpecifics: [[String]]) {
+        
+        print("Old Dry/Sweet: ", preferences.drySweetScale)
+        print("Old Tannin: ", preferences.tanninScale)
+        print("Old Soft/Acidic: ", preferences.softAcidityScale)
+        print("Old Light/Bold: ", preferences.lightBoldScale)
+        print("Old Fizziness: ", preferences.fizzinessScale)
+        print("Old Flavor Profiles: ", preferences.flavorProfilesNum)
+        print("Old Profile Specifics: ", preferences.flavorSpecificsNum)
+        
+        var numWinesLiked = 0
+
+        var drySweetUpdate: Double = 0.0
+        var tanninUpdate: Double = 0.0
+        var softAcidicUpdate: Double = 0.0
+        var lightBoldUpdate: Double = 0.0
+        var fizzinessUpdate: Double = 0.0
+
         for (index, wine) in miniSet.enumerated() {
             let swipe = index < direction.count ? direction[index] : .none
-            let profiles = index < threeProfileSpecifics.count ? threeProfileSpecifics[index] : []
 
-            print("🍷 Wine: \(wine.nameOnMenu)")
-            print("➡️ Swipe: \(swipe)")
-            print("📊 Profiles: \(profiles.joined(separator: ", "))")
-            print("---")
-        }
+//            print("🍷 Wine: \(wine.nameOnMenu)")
+//            print("Dry/Sweet: \(wine.drySweet)")
+//            print("Tannin: \(wine.tannin)")
+//            print("Soft/Acidic: \(wine.softAcidic)")
+//            print("Light/Bold: \(wine.lightBold)")
+//            print("Fizziness: \(wine.fizziness)")
+//            print("Flavor Profile: \(wine.flavorProfile)")
+//            print("Category: \(wine.category)")
+//            print("Profile Specifics: \(profiles.joined(separator: ", "))")
+//            print("➡️ Swipe: \(swipe)")
+//            print("---")
+
+                if swipe == .right {
+                    numWinesLiked += 1
+                    drySweetUpdate += wine.drySweet
+                    tanninUpdate += wine.tannin
+                    softAcidicUpdate += wine.softAcidic
+                    lightBoldUpdate += wine.lightBold
+                    fizzinessUpdate += wine.fizziness
+                    for specific in threeProfileSpecifics[index] {
+                        if preferences.flavorSpecifics.contains(specific) {
+                            if preferences.flavorSpecificsNum[specific] != nil {
+                                preferences.flavorSpecificsNum[specific]! += 0.25
+                            } else {
+                                preferences.flavorSpecificsNum[specific] = 0.25
+                            }
+                        } else {
+                            preferences.flavorSpecifics.insert(specific)
+                            if preferences.flavorSpecificsNum[specific] != nil {
+                                preferences.flavorSpecificsNum[specific]! += 0.25
+                            } else {
+                                preferences.flavorSpecificsNum[specific] = 0.25
+                            }
+                        }
+                        for (key, value) in wineDataInfo.flavorMap {
+                            if value.contains(specific) {
+                                if (preferences.flavorProfiles.contains(key)) {
+                                    if preferences.flavorProfilesNum[key] != nil {
+                                        preferences.flavorProfilesNum[key]! += 0.50
+                                    } else {
+                                        preferences.flavorProfilesNum[key] = 0.50
+                                    }
+                                } else {
+                                    preferences.flavorProfiles.insert(key)
+                                    if preferences.flavorProfilesNum[key] != nil {
+                                        preferences.flavorProfilesNum[key]! += 0.50
+                                    } else {
+                                        preferences.flavorProfilesNum[key] = 0.50
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            
+                if swipe == .left {
+                    for specific in threeProfileSpecifics[index] {
+                        if preferences.flavorSpecifics.contains(specific) {
+                            if var value = preferences.flavorSpecificsNum[specific] {
+                                    value -= 0.25
+                                    if value <= 0 {
+                                        preferences.flavorSpecificsNum.removeValue(forKey: specific)
+                                        preferences.flavorSpecifics.remove(specific)
+                                    } else {
+                                        preferences.flavorSpecificsNum[specific] = value
+                                    }
+                            }
+                        }
+                        for (key, value) in wineDataInfo.flavorMap {
+                            if value.contains(specific) {
+                                if (preferences.flavorProfiles.contains(key)) {
+                                    if var value = preferences.flavorSpecificsNum[key] {
+                                            value -= 0.50
+                                            if value <= 0 {
+                                                preferences.flavorSpecificsNum.removeValue(forKey: key)
+                                                preferences.flavorSpecifics.remove(key)
+                                            } else {
+                                                preferences.flavorSpecificsNum[key] = value
+                                            }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if numWinesLiked > 0 {
+                drySweetUpdate /= Double(numWinesLiked)
+                tanninUpdate /= Double(numWinesLiked)
+                softAcidicUpdate /= Double(numWinesLiked)
+                lightBoldUpdate /= Double(numWinesLiked)
+                fizzinessUpdate /= Double(numWinesLiked)
+
+                preferences.drySweetScale = (0.7 * preferences.drySweetScale) + (0.3 * drySweetUpdate)
+                preferences.tanninScale = (0.7 * preferences.tanninScale) + (0.3 * tanninUpdate)
+                preferences.softAcidityScale = (0.7 * preferences.softAcidityScale) + (0.3 * softAcidicUpdate)
+                preferences.lightBoldScale = (0.7 * preferences.lightBoldScale) + (0.3 * lightBoldUpdate)
+                preferences.fizzinessScale = (0.7 * preferences.fizzinessScale) + (0.3 * fizzinessUpdate)
+            }
+        
+        print("New Dry/Sweet: ", preferences.drySweetScale)
+        print("New Tannin: ", preferences.tanninScale)
+        print("New Soft/Acidic: ", preferences.softAcidityScale)
+        print("New Light/Bold: ", preferences.lightBoldScale)
+        print("New Fizziness: ", preferences.fizzinessScale)
+        print("New Flavor Profiles: ", preferences.flavorProfilesNum)
+        print("New Profile Specifics: ", preferences.flavorSpecificsNum)
 
     }
 
