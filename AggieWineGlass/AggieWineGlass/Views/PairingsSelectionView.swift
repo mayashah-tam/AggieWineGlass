@@ -95,10 +95,10 @@ struct PairingsSelectionView: View {
                                                     .foregroundColor(.white)
                                                     .multilineTextAlignment(.center)
                                                     .padding(.top, 4)
-                                                    .fixedSize(horizontal: false, vertical: true) // ✅ allows wrapping
+                                                    .fixedSize(horizontal: false, vertical: true)
                                             }
                                             .padding()
-                                            .frame(maxWidth: .infinity, minHeight: 160, maxHeight: 160) // ✅ uniform box height
+                                            .frame(maxWidth: .infinity, minHeight: 160, maxHeight: 160)
                                             .background(isSelected ? Color.white.opacity(0.2) : Color.clear)
                                             .overlay(
                                                 RoundedRectangle(cornerRadius: 12)

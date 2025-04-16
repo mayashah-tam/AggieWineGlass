@@ -13,6 +13,7 @@ struct PersonalizationSelectionView: View {
 
     @StateObject private var viewModel: PersonalizationSelectionViewModel
     @State private var showSwipeSetView = false
+    @State private var personalizationSelection = "More"
 
     init(preferences: UserPreferences) {
         _viewModel = StateObject(wrappedValue:
@@ -23,39 +24,70 @@ struct PersonalizationSelectionView: View {
     }
 
     var body: some View {
-        VStack {
-            Text("Do you want more or less personalization?")
-                .font(.headline)
-                .padding()
+        ZStack {
+            Color("PrimaryColor")
+                .ignoresSafeArea()
 
-            HStack {
-                Button("More") {
-                    viewModel.turnOnMorePersonalization()
+            VStack(spacing: 20) {
+                SectionTitleView(text: "Personalization Level")
+                
+                Spacer()
+
+                HStack(spacing: 0) {
+                    ForEach(["More", "Less"], id: \.self) { option in
+                        Button(action: {
+                            personalizationSelection = option
+                            if option == "More" {
+                                viewModel.turnOnMorePersonalization()
+                            } else {
+                                viewModel.turnOffMorePersonalization()
+                            }
+                        }) {
+                            Text(option)
+                                .font(.custom("Oswald-Regular", size: 16))
+                                .foregroundColor(
+                                    personalizationSelection == option
+                                    ? Color("PrimaryColor")
+                                    : .white
+                                )
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 20)
+                                .background(
+                                    personalizationSelection == option
+                                    ? Color.white
+                                    : Color.clear
+                                )
+                        }
+                    }
                 }
-                .foregroundColor(.blue)
-                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.white, lineWidth: 2)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(.horizontal)
+                .frame(height: UIScreen.main.bounds.height * 0.56)
 
-                Button("Less") {
-                    viewModel.turnOffMorePersonalization()
+                Spacer()
+
+                Button(action: {
+                    showSwipeSetView = true
+                }) {
+                    Text("Next")
+                        .font(.custom("Oswald-Regular", size: 18))
+                        .foregroundColor(Color("PrimaryColor"))
+                        .padding(.horizontal, 30)
+                        .padding(.vertical, 12)
+                        .background(Color.white)
+                        .cornerRadius(12)
                 }
-                .foregroundColor(.red)
-                .padding()
+                .padding(.top, 20)
             }
-
-            Button("Next") {
-                showSwipeSetView = true
-            }
-            .font(.title2)
             .padding()
-            .frame(maxWidth: .infinity)
-            .background(Color.accentColor)
-            .foregroundColor(.white)
-            .cornerRadius(10)
-            .padding(.top)
         }
-        .padding()
         .navigationDestination(isPresented: $showSwipeSetView) {
             SwipeView(preferences: preferences, wineDataInfo: wineDataInfo)
         }
     }
 }
+
