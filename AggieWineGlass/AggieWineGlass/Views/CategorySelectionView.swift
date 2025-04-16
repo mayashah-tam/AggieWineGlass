@@ -10,6 +10,7 @@ import SwiftUI
 struct CategorySelectionView: View {
     @EnvironmentObject var preferences: UserPreferences
     @EnvironmentObject var wineDataInfo: WineDataInfo
+    @State private var showAlert = false
 
     @StateObject private var viewModel: CategorySelectionViewModel
     @State private var showSliderScales = false
@@ -100,7 +101,11 @@ struct CategorySelectionView: View {
                     .padding(.top, 10)
 
                     Button(action: {
-                        showSliderScales = true
+                        if preferences.categories.isEmpty {
+                            showAlert = true
+                        } else {
+                            showSliderScales = true
+                        }
                     }) {
                         Text("Next")
                             .font(.custom("Oswald-Regular", size: 18))
@@ -110,7 +115,9 @@ struct CategorySelectionView: View {
                             .background(Color.white)
                             .cornerRadius(12)
                     }
-                    .disabled(preferences.categories.isEmpty)
+                    .alert("Please select at least one category", isPresented: $showAlert) {
+                        Button("OK", role: .cancel) { }
+                    }
                     .padding(.top, 20)
                 }
             }
