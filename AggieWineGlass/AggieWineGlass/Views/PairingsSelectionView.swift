@@ -52,6 +52,7 @@ struct PairingsSelectionView: View {
                                 showPairings = true
                             } else {
                                 showPairings = false
+                                viewModel.clearAllPairings()
                             }
                         }) {
                             Text(option)
