@@ -7,15 +7,15 @@
    y="0px"
    viewBox="0 0 26 26"
    xml:space="preserve"
-   id="svg683"
-   sodipodi:docname="earth.svg"
+   id="svg644"
+   sodipodi:docname="coffee.svg"
    inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"><defs
-   id="defs683" /><sodipodi:namedview
-   id="namedview683"
+   id="defs644" /><sodipodi:namedview
+   id="namedview644"
    pagecolor="#ffffff"
    bordercolor="#000000"
    borderopacity="0.25"
@@ -24,22 +24,14 @@
    inkscape:pagecheckerboard="0"
    inkscape:deskcolor="#d1d1d1"
    inkscape:zoom="38.807692"
-   inkscape:cx="12.948464"
+   inkscape:cx="13"
    inkscape:cy="13"
    inkscape:window-width="1200"
    inkscape:window-height="1186"
    inkscape:window-x="0"
    inkscape:window-y="25"
    inkscape:window-maximized="0"
-   inkscape:current-layer="svg683" />
-
-
-
-
-
-
-
-
+   inkscape:current-layer="svg644" />
 
 
 
@@ -143,73 +135,61 @@
 
 
 <g
-   id="Layer_111">
-	<g
-   id="g683">
-		<path
+   id="Layer_103">
+	<path
    fill="none"
-   stroke="#9C6B43"
+   stroke="#90442D"
    stroke-linecap="round"
    stroke-linejoin="round"
    stroke-miterlimit="10"
-   d="M17.4,14.7    c1.4,0,2.7-0.5,2.7-0.5c2.8-1.3-1-5.7-2.6-4.1c-1.6,1.6,0.3,11.3,0.3,11.3H13H8.4c0,0,1.9-9.7,0.3-11.3C7,8.5,3.2,13,6,14.2    c0,0,1.3,0.5,2.7,0.5"
-   id="path679" />
-		<path
+   d="M16.7,20.9H7.5   c-1,0-1.8-0.8-1.8-1.8v-8.3h12.9v8.3C18.5,20.1,17.7,20.9,16.7,20.9"
+   id="path641" />
+	
+		<circle
    fill="none"
-   stroke="#9C6B43"
+   stroke="#90442D"
    stroke-linecap="round"
    stroke-linejoin="round"
    stroke-miterlimit="10"
-   d="M17.4,14.7    c4,0,5.3-1.6,5.3-5c0-4.7-6.9-5.1-9.6-5.1c-2.7,0-9.6,0.5-9.6,5.1c0,3.4,1.3,5,5.3,5"
-   id="path680" />
-		
-			<line
+   cx="20.3"
+   cy="14.5"
+   r="1.8"
+   id="circle641" />
+	
+		<line
    fill="none"
-   stroke="#9C6B43"
+   stroke="#90442D"
    stroke-linecap="round"
    stroke-linejoin="round"
    stroke-miterlimit="10"
-   x1="8.6"
-   y1="10.1"
-   x2="5.4"
-   y2="13.8"
-   id="line680" />
-		
-			<line
+   x1="3.8"
+   y1="22.7"
+   x2="20.3"
+   y2="22.7"
+   id="line641" />
+	<path
    fill="none"
-   stroke="#9C6B43"
+   stroke="#90442D"
    stroke-linecap="round"
    stroke-linejoin="round"
    stroke-miterlimit="10"
-   x1="9.1"
-   y1="11.5"
-   x2="6.9"
-   y2="14.5"
-   id="line681" />
-		
-			<line
+   d="M11.9,8.8   c0-0.7,0.7-0.7,0.7-1.4c0-0.7-0.7-0.7-0.7-1.4c0-0.7,0.7-0.7,0.7-1.4c0-0.7-0.7-0.7-0.7-1.4"
+   id="path642" />
+	<path
    fill="none"
-   stroke="#9C6B43"
+   stroke="#90442D"
    stroke-linecap="round"
    stroke-linejoin="round"
    stroke-miterlimit="10"
-   x1="17.4"
-   y1="10.1"
-   x2="20.6"
-   y2="13.8"
-   id="line682" />
-		
-			<line
+   d="M14.6,8.8   c0-0.7,0.7-0.7,0.7-1.4c0-0.7-0.7-0.7-0.7-1.4c0-0.7,0.7-0.7,0.7-1.4c0-0.7-0.7-0.7-0.7-1.4"
+   id="path643" />
+	<path
    fill="none"
-   stroke="#9C6B43"
+   stroke="#90442D"
    stroke-linecap="round"
    stroke-linejoin="round"
    stroke-miterlimit="10"
-   x1="16.9"
-   y1="11.5"
-   x2="19.1"
-   y2="14.5"
-   id="line683" />
-	</g>
+   d="M9.1,8.8   c0-0.7,0.7-0.7,0.7-1.4c0-0.7-0.7-0.7-0.7-1.4c0-0.7,0.7-0.7,0.7-1.4C9.8,4,9.1,4,9.1,3.3"
+   id="path644" />
 </g>
 </svg>
