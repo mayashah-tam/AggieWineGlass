@@ -14,6 +14,7 @@ struct PairingsSelectionView: View {
     @StateObject private var viewModel: PairingSelectionViewModel
     @State private var showPairings = false
     @State private var showPersonalizationSelection = false
+    @State private var selection: String = "No"
 
     init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
         _viewModel = StateObject(wrappedValue:
@@ -25,86 +26,148 @@ struct PairingsSelectionView: View {
     }
 
     var body: some View {
-        VStack {
-            Text("Select Food Pairings:")
-                .font(.headline)
-                .padding()
-
-            if !showPairings {
-                HStack {
-                    Button(action: {
-                        viewModel.turnOnPairingSelection()
-                        viewModel.findPairingsBasedOnWineCategories()
-                        showPairings = true
-                    }) {
-                        Text("Yes")
-                            .foregroundColor(.blue)
-                            .padding()
-                    }
-
-                    Button(action: {
-                        showPairings = false
-                    }) {
-                        Text("No")
-                            .foregroundColor(.red)
-                            .padding()
-                    }
-                }
-            }
-
-            if showPairings {
-                if viewModel.uniqueFilteredPairings.isEmpty {
-                    Text("Loading pairings...")
-                        .padding()
-                        .foregroundColor(.gray)
-                } else {
-                    List(viewModel.uniqueFilteredPairings.sorted(), id: \.self) { pairing in
+        let columns = [
+            GridItem(.flexible()),
+            GridItem(.flexible()),
+            GridItem(.flexible())
+        ]
+        
+        ZStack {
+            Color("PrimaryColor")
+                .ignoresSafeArea()
+            
+            VStack(spacing: 20) {
+                SectionTitleView(text: "Select Food Pairings")
+                
+                Spacer()
+                
+                HStack(spacing: 0) {
+                    ForEach(["Yes", "No"], id: \.self) { option in
                         Button(action: {
-                            viewModel.togglePairingSelection(pairing: pairing)
-                        }) {
-                            HStack {
-                                Image(systemName: viewModel.preferences.pairings.contains(pairing) ? "checkmark.square" : "square")
-                                    .foregroundColor(.blue)
-                                Text(pairing)
-                                    .foregroundColor(.primary)
+                            selection = option
+                            if option == "Yes" {
+                                viewModel.turnOnPairingSelection()
+                                viewModel.findPairingsBasedOnWineCategories()
+                                showPairings = true
+                            } else {
+                                showPairings = false
                             }
+                        }) {
+                            Text(option)
+                                .font(.custom("Oswald-Regular", size: 16))
+                                .foregroundColor(selection == option ? Color("PrimaryColor") : .white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 6)
+                                .background(selection == option ? Color.white : Color.clear)
                         }
-                        .buttonStyle(PlainButtonStyle())
                     }
-
-                    Button("Select All Pairings") {
-                        viewModel.selectAllPairings()
-                    }
-                    .foregroundColor(.blue)
-                    .padding()
-
-                    Button("Clear Pairings") {
-                        viewModel.clearAllPairings()
-                    }
-                    .foregroundColor(.red)
-                    .padding()
                 }
-            }
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.white, lineWidth: 2)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(.horizontal)
+                
+                Group {
+                    if showPairings {
+                        if viewModel.uniqueFilteredPairings.isEmpty {
+                            Text("Loading pairings...")
+                                .foregroundColor(.white)
+                                .frame(maxHeight: UIScreen.main.bounds.height * 0.7)
+                        } else {
+                            ScrollView {
+                                LazyVGrid(columns: columns, spacing: 20) {
+                                    ForEach(viewModel.uniqueFilteredPairings.sorted(), id: \.self) { pairing in
+                                        let isSelected = preferences.pairings.contains(pairing)
 
-            Button("Next") {
-                showPersonalizationSelection = true
+                                        Button(action: {
+                                            viewModel.togglePairingSelection(pairing: pairing)
+                                        }) {
+                                            VStack {
+                                                Image(pairing)
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 80, height: 80)
+
+                                                Text(pairing.replacingOccurrences(of: "_", with: " ").capitalized)
+                                                    .font(.caption)
+                                                    .foregroundColor(.white)
+                                                    .multilineTextAlignment(.center)
+                                                    .padding(.top, 4)
+                                                    .fixedSize(horizontal: false, vertical: true) // ✅ allows wrapping
+                                            }
+                                            .padding()
+                                            .frame(maxWidth: .infinity, minHeight: 160, maxHeight: 160) // ✅ uniform box height
+                                            .background(isSelected ? Color.white.opacity(0.2) : Color.clear)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .stroke(Color.white, lineWidth: 1)
+                                            )
+                                            .cornerRadius(12)
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
+                                    }
+                                }
+                                .padding(.top)
+                            }
+                            .frame(height: UIScreen.main.bounds.height * 0.415)
+                            
+                            HStack(spacing: 16) {
+                                Button(action: {
+                                    viewModel.selectAllPairings()
+                                }) {
+                                    Text("Select All")
+                                        .font(.custom("Oswald-Regular", size: 16))
+                                        .foregroundColor(Color("PrimaryColor"))
+                                        .padding(.horizontal, 20)
+                                        .padding(.vertical, 10)
+                                        .background(Color.white)
+                                        .cornerRadius(10)
+                                }
+
+                                Button(action: {
+                                    viewModel.clearAllPairings()
+                                }) {
+                                    Text("Clear All")
+                                        .font(.custom("Oswald-Regular", size: 16))
+                                        .foregroundColor(Color("PrimaryColor"))
+                                        .padding(.horizontal, 20)
+                                        .padding(.vertical, 10)
+                                        .background(Color.white)
+                                        .cornerRadius(10)
+                                }
+                            }
+                            .padding(.top, 10)
+                        }
+                    } else {
+                        Spacer()
+                            .frame(height: UIScreen.main.bounds.height * 0.5)
+                    }
+                }
+
+                Spacer()
+                
+                Button(action: {
+                    showPersonalizationSelection = true
+                }) {
+                    Text("Next")
+                        .font(.custom("Oswald-Regular", size: 18))
+                        .foregroundColor(Color("PrimaryColor"))
+                        .padding(.horizontal, 30)
+                        .padding(.vertical, 12)
+                        .background(Color.white)
+                        .cornerRadius(12)
+                }
+                .padding(.top, 20)
             }
-            .font(.title2)
             .padding()
-            .frame(maxWidth: .infinity)
-            .background(Color.accentColor)
-            .foregroundColor(.white)
-            .cornerRadius(10)
-            .padding(.top)
-        }
-        .padding()
-        .onAppear {
-            print("Unique Pairings: \(wineDataInfo.uniquePairings)")
         }
         .navigationDestination(isPresented: $showPersonalizationSelection) {
-            PersonalizationSelectionView(
-                preferences: preferences
-            )
+            PersonalizationSelectionView(preferences: preferences)
+        }
+        .onAppear {
+            print("Unique Pairings: \(wineDataInfo.uniquePairings)")
         }
     }
 }
