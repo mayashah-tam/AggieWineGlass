@@ -173,7 +173,6 @@ class RecommendationViewModel: ObservableObject {
     }
     
     func finalRecommendations(sortedWineScores: [(key: String, value: Double)]) -> [Wine] {
-        
         var top3recs: [Wine] = []
         for key in sortedWineScores.prefix(3) {
             top3recs.append(wineDataInfo.wines.first(where: { $0.id == key.key })!)

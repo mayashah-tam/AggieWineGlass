@@ -1,5 +1,5 @@
 //
-//  SwipeSetViewModel.swift
+//  SwipeViewModel.swift
 //  AggieWineGlass
 //
 //  Created by Maya Shah on 4/12/25.
@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-class SwipeSetViewModel: ObservableObject {
+class SwipeViewModel: ObservableObject {
     var preferences: UserPreferences
     var wineDataInfo: WineDataInfo
     @Published var redWineSets: Int

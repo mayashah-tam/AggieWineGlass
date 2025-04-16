@@ -22,12 +22,31 @@ struct SwipeView: View {
     @State private var selectedProfileSet: [[String]] = []
     @State private var isLoading = false
     @State private var isSwipeReady = false
+    
+    // MARK: Variable for Navigation
+    @State private var showRecommendationView = false
+    
+    // MARK: Wine puns (Loading)
+    @State private var loadingPun: String = ""
+    @State private var showLoadingPun = false
+    private let winePuns = [
+        "Pouring your next favorite...",
+        "Decanting your perfect match...",
+        "Swirling through flavor notes...",
+        "Uncorking the next wine card...",
+        "Letting your next wine breathe...",
+        "Fermenting a great pick for you...",
+        "Crushing the data... like grapes.",
+        "Aged to perfection — almost ready!"
+    ]
 
-    @StateObject var viewModel: SwipeSetViewModel
+
+
+    @StateObject var viewModel: SwipeViewModel
     
     init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
         _viewModel = StateObject(wrappedValue:
-            SwipeSetViewModel (
+            SwipeViewModel (
                 preferences: preferences,
                 wineDataInfo: wineDataInfo
             )
@@ -40,9 +59,24 @@ struct SwipeView: View {
 
             if hasStarted {
                 if isLoading {
-                    ProgressView("Loading next wines...")
-                        .foregroundColor(.white)
-                        .navigationBarBackButtonHidden(true)
+                    VStack(spacing: 20) {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .scaleEffect(2)
+
+                        if showLoadingPun {
+                            Text(loadingPun)
+                                .font(.custom("Oswald-Regular", size: 20))
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.center)
+                                .transition(.opacity)
+                        }
+                    }
+                    .padding(30)
+                    .background(Color.white.opacity(0.1))
+                    .cornerRadius(20)
+                    .shadow(radius: 10)
+                    .navigationBarBackButtonHidden(true)
                 } else if isSwipeReady {
                     SwipeableCardsView(wines: currentMiniSet) { swipedModels in
                         swipeResults = swipedModels.map { $0.swipeDirection }
@@ -95,6 +129,9 @@ struct SwipeView: View {
                 }
             }
         }
+        .navigationDestination(isPresented: $showRecommendationView) {
+            RecommendationView(preferences: preferences, wineDataInfo: wineDataInfo)
+        }
     }
 
     func startSwipeLoop() {
@@ -103,8 +140,12 @@ struct SwipeView: View {
 
     func loadNextSet() {
         isLoading = true
+        loadingPun = winePuns.randomElement() ?? "Finding your next wine..."
+        withAnimation(.easeInOut(duration: 0.3)) {
+            showLoadingPun = true
+        }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             var miniSet: [Wine] = []
 
             if viewModel.redWineSets > 0 {
@@ -142,8 +183,7 @@ struct SwipeView: View {
         )
 
         if !setsRemaining() {
-            // TODO: Navigate to Final Ranking
-            print("All sets completed!")
+            showRecommendationView = true
         } else {
             loadNextSet()
         }
@@ -186,28 +226,65 @@ struct CardView: View {
         let selectedProfiles = model.selectedProfileSpecifics
 
         return VStack(alignment: .leading, spacing: 12) {
-            Text(wine.category)
-                .font(.headline)
-                .textCase(.uppercase)
+            VStack(spacing: 6) {
+                Image(wine.category.capitalized)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 100, height: 100)
+                    .padding(.top, 10)
 
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Dry/Sweet: \(wine.drySweet, specifier: "%.1f")")
-                Text("Tannin: \(wine.tannin, specifier: "%.1f")")
-                Text("Soft/Acidic: \(wine.softAcidic, specifier: "%.1f")")
-                Text("Light/Bold: \(wine.lightBold, specifier: "%.1f")")
-                Text("Fizziness: \(wine.fizziness, specifier: "%.1f")")
+                Text("Random \(wine.category.capitalized)")
+                    .font(.custom("Oswald-Regular", size: 24))
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
             }
-            .font(.subheadline)
+            .frame(maxWidth: .infinity)
+            
+            Spacer()
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Profile Highlights:")
-                    .font(.subheadline)
-                    .bold()
-                ForEach(selectedProfiles, id: \.self) { profile in
-                    Text("• \(profile)")
-                        .font(.footnote)
+            Text("Attributes")
+                .font(.custom("Oswald-Regular", size: 20))
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity, alignment: .center)
+
+            VStack(alignment: .leading, spacing: 10) {
+                WineAttributeSlider(title: "Dry/Sweet", value: wine.drySweet, min: 1, max: 5, color: .white)
+                WineAttributeSlider(title: "Tannin", value: wine.tannin, min: 1, max: 5, color: .white)
+                WineAttributeSlider(title: "Soft/Acidic", value: wine.softAcidic, min: 1, max: 5, color: .white)
+                WineAttributeSlider(title: "Light/Bold", value: wine.lightBold, min: 1, max: 5, color: .white)
+                WineAttributeSlider(title: "Fizziness", value: wine.fizziness, min: 0, max: 5, color: .white)
+            }
+            
+            Spacer()
+
+            VStack(alignment: .center, spacing: 10) {
+                Text("Profile Highlights")
+                    .font(.custom("Oswald-Regular", size: 20))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 3), spacing: 16) {
+                    ForEach(selectedProfiles, id: \.self) { profile in
+                        VStack(spacing: 6) {
+                            Image(profile)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 50, height: 50)
+
+                            Text(profile.replacingOccurrences(of: "_", with: " ").capitalized)
+                                .font(.footnote)
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.7)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
                 }
             }
+            .padding(.top, 8)
+
 
             Spacer()
         }
@@ -346,3 +423,41 @@ struct SwipeableCardsView: View {
     }
 }
 
+struct WineAttributeSlider: View {
+    let title: String
+    let value: Double
+    let min: Double
+    let max: Double
+    let color: Color
+
+    var body: some View {
+        HStack {
+            Text(title)
+                .frame(width: 100, alignment: .leading)
+                .font(.subheadline)
+                .foregroundColor(.white)
+
+            GeometryReader { geometry in
+                let clampedValue = Swift.min(Swift.max(value, min), max)
+                let percent = (clampedValue - min) / (max - min)
+
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Color.white.opacity(0.2))
+                        .frame(height: 6)
+
+                    Capsule()
+                        .fill(color)
+                        .frame(width: geometry.size.width * CGFloat(percent), height: 6)
+                }
+            }
+            .frame(height: 10)
+            .padding(.horizontal, 8)
+
+            Text(String(format: "%.1f", value))
+                .frame(width: 35, alignment: .trailing)
+                .font(.subheadline)
+                .foregroundColor(.white)
+        }
+    }
+}
