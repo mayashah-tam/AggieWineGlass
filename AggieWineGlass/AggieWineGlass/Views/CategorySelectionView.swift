@@ -110,6 +110,7 @@ struct CategorySelectionView: View {
                             .background(Color.white)
                             .cornerRadius(12)
                     }
+                    .disabled(preferences.categories.isEmpty)
                     .padding(.top, 20)
                 }
             }

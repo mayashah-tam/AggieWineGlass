@@ -121,6 +121,7 @@ struct FlavorProfileSelectionView: View {
                         .cornerRadius(12)
                 }
                 .padding(.top, 20)
+                .disabled(preferences.flavorProfiles.isEmpty)
             }
         }
         .onAppear {
