@@ -6,6 +6,7 @@ struct RegionsSelectionView: View {
 
     @StateObject private var viewModel: RegionSelectionViewModel
     @State private var showFlavorProfileSelection = false
+    @State private var showAlert = false
 
     init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
         _viewModel = StateObject(wrappedValue:
@@ -99,7 +100,11 @@ struct RegionsSelectionView: View {
                     Spacer()
 
                     Button(action: {
-                        showFlavorProfileSelection = true
+                        if preferences.regionClasses.isEmpty {
+                            showAlert = true
+                        } else {
+                            showFlavorProfileSelection = true
+                        }
                     }) {
                         Text("Next")
                             .font(.custom("Oswald-Regular", size: 18))
@@ -110,7 +115,9 @@ struct RegionsSelectionView: View {
                             .cornerRadius(12)
                     }
                     .padding(.top, 20)
-                    .disabled(preferences.regionClasses.isEmpty)
+                    .alert("Please select at least one region", isPresented: $showAlert) {
+                        Button("OK", role: .cancel) { }
+                    }
                 }
             }
             .padding()

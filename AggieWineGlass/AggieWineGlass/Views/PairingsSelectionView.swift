@@ -15,6 +15,7 @@ struct PairingsSelectionView: View {
     @State private var showPairings = false
     @State private var showPersonalizationSelection = false
     @State private var selection: String = "No"
+    @State private var showAlert = false
 
     init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
         _viewModel = StateObject(wrappedValue:
@@ -149,7 +150,16 @@ struct PairingsSelectionView: View {
                 Spacer()
                 
                 Button(action: {
-                    showPersonalizationSelection = true
+                    if (preferences.isPairing) {
+                        if preferences.pairings.isEmpty {
+                            showAlert = true
+                        } else {
+                            showPersonalizationSelection = true
+                        }
+                    } else {
+                        showPersonalizationSelection = true
+                    }
+                    
                 }) {
                     Text("Next")
                         .font(.custom("Oswald-Regular", size: 18))
@@ -160,6 +170,9 @@ struct PairingsSelectionView: View {
                         .cornerRadius(12)
                 }
                 .padding(.top, 20)
+                .alert("Please select at least one pairing", isPresented: $showAlert) {
+                    Button("OK", role: .cancel) { }
+                }
             }
             .padding()
         }

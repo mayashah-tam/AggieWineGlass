@@ -13,6 +13,7 @@ struct FlavorProfileSelectionView: View {
 
     @StateObject private var viewModel: FlavorProfileSelectionViewModel
     @State private var showPairingsSelection = false
+    @State private var showAlert = false
 
     init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
         _viewModel = StateObject(wrappedValue:
@@ -110,7 +111,11 @@ struct FlavorProfileSelectionView: View {
 
                 Button(action: {
                     viewModel.setProfileSpecifics()
-                    showPairingsSelection = true
+                    if preferences.flavorSpecifics.isEmpty {
+                        showAlert = true
+                    } else {
+                        showPairingsSelection = true
+                    }
                 }) {
                     Text("Next")
                         .font(.custom("Oswald-Regular", size: 18))
@@ -121,7 +126,9 @@ struct FlavorProfileSelectionView: View {
                         .cornerRadius(12)
                 }
                 .padding(.top, 20)
-                .disabled(preferences.flavorProfiles.isEmpty)
+                .alert("Please select at least one flavor profile", isPresented: $showAlert) {
+                    Button("OK", role: .cancel) { }
+                }
             }
         }
         .onAppear {
