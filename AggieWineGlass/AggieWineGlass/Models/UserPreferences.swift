@@ -28,7 +28,7 @@ class UserPreferences: ObservableObject {
          tanninScale: Double = 3.0,
          softAcidityScale: Double = 3.0,
          lightBoldScale: Double = 3.0,
-         fizzinessScale: Double = 3.0,
+         fizzinessScale: Double = 0.0,
          categories: Set<String> = [],
          flavorProfiles: Set<String> = [],
          flavorSpecifics: Set<String> = [],
