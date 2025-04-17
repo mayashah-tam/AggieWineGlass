@@ -163,6 +163,10 @@ struct SwipeView: View {
                 let wine = viewModel.findCategoryWineRandom(filterCategories: ["Rosé wine"])
                 miniSet = [wine]
                 viewModel.roseWineNum -= 1
+            } else if viewModel.fortifiedWineNum > 0 {
+                let wine = viewModel.findCategoryWineRandom(filterCategories: ["Fortified Wine"])
+                miniSet = [wine]
+                viewModel.fortifiedWineNum -= 1
             }
 
             currentMiniSet = miniSet
