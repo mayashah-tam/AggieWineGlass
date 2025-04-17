@@ -205,17 +205,19 @@ struct WineCardView: View {
 
 @ViewBuilder
 private func wineInfoRow(label: String, value: String) -> some View {
-    HStack {
+    HStack(alignment: .top, spacing: 12) {
         Text(label)
             .foregroundColor(.white)
             .font(.subheadline)
-
-        Spacer()
+            .frame(width: 100, alignment: .leading)
 
         Text(value)
             .foregroundColor(.white)
             .font(.subheadline)
             .multilineTextAlignment(.trailing)
+            .lineLimit(nil)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .trailing)
     }
 }
 
