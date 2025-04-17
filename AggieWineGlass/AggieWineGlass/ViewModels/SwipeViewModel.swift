@@ -16,6 +16,7 @@ class SwipeViewModel: ObservableObject {
     @Published var sparklingWineSets: Int
     @Published var dessertWineNum: Int
     @Published var roseWineNum: Int
+    @Published var fortifiedWineNum: Int
     
     init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
         self.wineDataInfo = wineDataInfo
@@ -25,6 +26,7 @@ class SwipeViewModel: ObservableObject {
         sparklingWineSets = 0
         dessertWineNum = 0
         roseWineNum = 0
+        fortifiedWineNum = 0
     }
     
     func setSwipeSets() {
@@ -49,6 +51,9 @@ class SwipeViewModel: ObservableObject {
             }
             if (preferences.categories.contains("Rosé wine")) {
                 roseWineNum = 2
+            }
+            if (preferences.categories.contains("Fortified Wine")) {
+                fortifiedWineNum = 1
             }
         } else if (preferences.highPersonalization) {
             if (preferences.categories.contains("Red wine") && preferences.categories.contains("White wine") && preferences.categories.contains("Sparkling wine")) {
@@ -76,6 +81,9 @@ class SwipeViewModel: ObservableObject {
             }
             if (preferences.categories.contains("Dessert wine")) {
                 dessertWineNum = 2
+            }
+            if (preferences.categories.contains("Fortified Wine")) {
+                fortifiedWineNum = 2
             }
         }
         print(redWineSets)
