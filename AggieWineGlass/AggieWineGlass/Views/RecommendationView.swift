@@ -81,8 +81,9 @@ struct WineCardView: View {
                     Text(wine.nameOnMenu.capitalized)
                         .font(.custom("Oswald-Regular", size: 18))
                         .foregroundColor(.white)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .minimumScaleFactor(0.7)
 
                     Spacer()
 
