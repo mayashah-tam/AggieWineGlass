@@ -13,7 +13,7 @@ struct PersonalizationSelectionView: View {
 
     @StateObject private var viewModel: PersonalizationSelectionViewModel
     @State private var showSwipeView = false
-    @State private var personalizationSelection = "More"
+    @State private var personalizationSelection = "Less"
 
     init(preferences: UserPreferences) {
         _viewModel = StateObject(wrappedValue:
