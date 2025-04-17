@@ -41,6 +41,7 @@ class PairingSelectionViewModel: ObservableObject {
     func selectAllPairings() {
         // this would need to be changed to all associated pairings based on selected wine categories
         preferences.pairings = Set(wineDataInfo.uniquePairings)
+        preferences.isPairing = true
         print(preferences.pairings)
     }
     
