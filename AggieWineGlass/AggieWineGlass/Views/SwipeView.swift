@@ -40,8 +40,6 @@ struct SwipeView: View {
         "Aged to perfection — almost ready!"
     ]
 
-
-
     @StateObject var viewModel: SwipeViewModel
     
     init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {

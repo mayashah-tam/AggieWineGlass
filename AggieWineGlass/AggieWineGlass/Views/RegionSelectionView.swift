@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct RegionsSelectionView: View {
+struct RegionSelectionView: View {
     @EnvironmentObject var preferences: UserPreferences
     @EnvironmentObject var wineDataInfo: WineDataInfo
 

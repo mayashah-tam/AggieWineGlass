@@ -12,7 +12,7 @@ struct SliderScalesView: View {
     @EnvironmentObject var wineDataInfo: WineDataInfo
 
     @StateObject private var viewModel: SliderScalesViewModel
-    @State private var showRegionsSelection = false
+    @State private var showRegionSelection = false
 
     init(preferences: UserPreferences) {
         _viewModel = StateObject(wrappedValue:
@@ -71,7 +71,7 @@ struct SliderScalesView: View {
                 Spacer()
 
                 Button(action: {
-                    showRegionsSelection = true
+                    showRegionSelection = true
                 }) {
                     Text("Next")
                         .font(.custom("Oswald-Regular", size: 18))
@@ -91,8 +91,8 @@ struct SliderScalesView: View {
             viewModel.updateLightBoldScale()
             viewModel.updateFizzinessScale()
         }
-        .navigationDestination(isPresented: $showRegionsSelection) {
-            RegionsSelectionView(
+        .navigationDestination(isPresented: $showRegionSelection) {
+            RegionSelectionView(
                 preferences: preferences,
                 wineDataInfo: wineDataInfo
             )

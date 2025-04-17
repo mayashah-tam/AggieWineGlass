@@ -12,7 +12,7 @@ struct PersonalizationSelectionView: View {
     @EnvironmentObject var wineDataInfo: WineDataInfo
 
     @StateObject private var viewModel: PersonalizationSelectionViewModel
-    @State private var showSwipeSetView = false
+    @State private var showSwipeView = false
     @State private var personalizationSelection = "More"
 
     init(preferences: UserPreferences) {
@@ -71,7 +71,7 @@ struct PersonalizationSelectionView: View {
                 Spacer()
 
                 Button(action: {
-                    showSwipeSetView = true
+                    showSwipeView = true
                 }) {
                     Text("Next")
                         .font(.custom("Oswald-Regular", size: 18))
@@ -85,7 +85,7 @@ struct PersonalizationSelectionView: View {
             }
             .padding()
         }
-        .navigationDestination(isPresented: $showSwipeSetView) {
+        .navigationDestination(isPresented: $showSwipeView) {
             SwipeView(preferences: preferences, wineDataInfo: wineDataInfo)
         }
     }
