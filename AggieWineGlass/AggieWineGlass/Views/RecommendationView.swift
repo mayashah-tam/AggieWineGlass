@@ -116,7 +116,7 @@ struct WineCardView: View {
                             wineInfoRow(label: "Country", value: wine.country)
                             wineInfoRow(label: "Region", value: wine.region)
                             wineInfoRow(label: "Winery", value: wine.winery)
-                            wineInfoRow(label: "Grapes", value: wine.grapeVarieties)
+                            wineInfoRow(label: "Grapes", value: cleanGrapeString(wine.grapeVarieties))
                             wineInfoRow(label: "Bottle Price", value: "$\(String(format: "%.2f", wine.bottlePrice))")
                         }
 
@@ -217,3 +217,12 @@ private func wineInfoRow(label: String, value: String) -> some View {
             .multilineTextAlignment(.trailing)
     }
 }
+
+private func cleanGrapeString(_ raw: String) -> String {
+    raw
+        .replacingOccurrences(of: "[", with: "")
+        .replacingOccurrences(of: "]", with: "")
+        .replacingOccurrences(of: "'", with: "")
+        .trimmingCharacters(in: .whitespacesAndNewlines)
+}
+
