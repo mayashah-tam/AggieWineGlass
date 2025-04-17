@@ -156,8 +156,10 @@ struct WineCardView: View {
                                         .font(.caption2)
                                         .foregroundColor(.white)
                                         .multilineTextAlignment(.center)
-                                        .lineLimit(2)
-                                        .minimumScaleFactor(0.7)
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.5)
+                                        .allowsTightening(true)
+                                        .truncationMode(.tail)
                                 }
                                 .frame(maxWidth: .infinity)
                             }
