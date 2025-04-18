@@ -41,6 +41,28 @@ class RecommendationViewModel: ObservableObject {
         return filteredCBFWines
     }
     
+    private func wineCBFNoRegion(filterCategories: Set<String>) -> [Wine] {
+        let filteredCBFWines = wineDataInfo.wines.filter { wine in
+
+            let matchCategory = filterCategories.contains(wine.category)
+            
+            let matchDrySweet = wine.drySweet >= preferences.drySweetScale - 1.5 && wine.drySweet <= preferences.drySweetScale + 1.5
+            
+            let matchTannin = wine.tannin >= preferences.tanninScale - 3.0 && wine.tannin <= preferences.tanninScale + 3.0
+            
+            let matchSoftAcidic = wine.softAcidic >= preferences.softAcidityScale - 3.0 && wine.softAcidic <= preferences.softAcidityScale + 3.0
+            
+            let matchLightBold = wine.lightBold >= preferences.lightBoldScale - 2.0 && wine.lightBold <= preferences.lightBoldScale + 2.0
+
+            return matchCategory &&
+                    matchDrySweet &&
+                    matchTannin &&
+                    matchSoftAcidic &&
+                    matchLightBold
+            }
+        return filteredCBFWines
+    }
+    
     private func weightedCosineSimilarity(wineScaleValues: [Double], userScalePrefs: [Double]) -> Double {
         let weights: [Double] = [0.20, 0.20, 0.30, 0.20, 0.10]
 
@@ -113,8 +135,16 @@ class RecommendationViewModel: ObservableObject {
         }
     }
     
-    func recommendationRanking() -> [(key: String, value: Double)] {
-        let cbfWineResults = wineCBF(filterCategories: preferences.categories, filterRegionClass: preferences.regionClasses)
+    func cbfWineResults(version: Bool, category: String) -> [Wine] {
+        if (version) {
+            return wineCBF(filterCategories: Set([category]), filterRegionClass: preferences.regionClasses)
+        } else {
+            return wineCBFNoRegion(filterCategories: Set([category]))
+        }
+    }
+    
+    func recommendationRanking(category: String, version: Bool) -> [(key: String, value: Double)] {
+        let cbfWineResults = cbfWineResults(version: version, category: category)
         
         var scaleWineCosineScores: [String: Double] = [:]
         let userScalePreferences = [preferences.drySweetScale, preferences.tanninScale, preferences.softAcidityScale, preferences.lightBoldScale, preferences.fizzinessScale]
@@ -173,12 +203,148 @@ class RecommendationViewModel: ObservableObject {
     }
     
     func finalRecommendations() -> [Wine] {
-        let sortedWineScores: [(key: String, value: Double)] = recommendationRanking()
-        var top3recs: [Wine] = []
-        for key in sortedWineScores.prefix(3) {
-            top3recs.append(wineDataInfo.wines.first(where: { $0.id == key.key })!)
+        var topRecs: [Wine] = []
+
+        for category in preferences.categories {
+            var sortedWineScores = recommendationRanking(category: category, version: true)
+            guard !sortedWineScores.isEmpty else {
+                continue
+            }
+
+            var topCategoryRecs = sortedWineScores.filter { $0.value >= 0.90 }
+
+            if !topCategoryRecs.isEmpty {
+                let topCount = Int(ceil(Double(sortedWineScores.count) * 0.1))
+                topCategoryRecs = Array(sortedWineScores.prefix(topCount))
+            } else {
+                topCategoryRecs = sortedWineScores
+            }
+
+            if category == "Red wine" || category == "White wine" {
+                guard let key1 = topCategoryRecs.randomElement()?.key,
+                      let wine1 = wineDataInfo.wines.first(where: { $0.id == key1 }) else {
+                    continue
+                }
+
+                topRecs.append(wine1)
+
+                var wine2: Wine?
+                var attempts = 0
+                while wine2 == nil && attempts < 10 {
+                    if let newKey = topCategoryRecs.randomElement()?.key,
+                       newKey != key1,
+                       let newWine = wineDataInfo.wines.first(where: { $0.id == newKey }) {
+                        wine2 = newWine
+                    }
+                    attempts += 1
+                }
+
+                if let wine2 = wine2 {
+                    topRecs.append(wine2)
+                }
+            } else {
+                if let key = topCategoryRecs.randomElement()?.key,
+                   let wine = wineDataInfo.wines.first(where: { $0.id == key }) {
+                    topRecs.append(wine)
+                }
+            }
         }
-        print(top3recs)
-        return top3recs
+        print("\n✅ Final Top Recs:")
+        for rec in topRecs {
+            print("- \(rec.nameOnMenu) (\(rec.category))")
+        }
+        return topRecs
+    }
+
+    
+    func topRecsRestaurants() {
+        let topRecs = finalRecommendations()
+        var restaurantMapping: [String: [String: Double]] = [:]
+
+        for wine in topRecs {
+            let matchingWines = wineDataInfo.wines.filter { $0.id == wine.id }
+            for match in matchingWines {
+                restaurantMapping[wine.id, default: [:]][match.restaurant] = match.glassPrice
+            }
+        }
+    }
+    
+    func adventureRecs() -> [Wine] {
+        var adventureRecs: [Wine] = []
+
+        for category in preferences.categories {
+
+            var sortedWineScores = recommendationRanking(category: category, version: true)
+            if sortedWineScores.isEmpty {
+                sortedWineScores = recommendationRanking(category: category, version: false)
+            }
+
+            var adventureCategoryRecs = sortedWineScores.filter { $0.value >= 0.7 && $0.value <= 0.9 }
+
+            if adventureCategoryRecs.isEmpty {
+                let count = sortedWineScores.count
+                let startIndex = Int(ceil(Double(count) * 0.1))
+                let endIndex = min(Int(ceil(Double(count) * 0.2)), count)
+
+                if count >= 2, startIndex < endIndex {
+                    adventureCategoryRecs = Array(sortedWineScores[startIndex..<endIndex])
+                } else {
+                    adventureCategoryRecs = sortedWineScores
+                }
+            }
+
+            if category == "Red wine" || category == "White wine" {
+                guard let key1 = adventureCategoryRecs.randomElement()?.key,
+                      let wine1 = wineDataInfo.wines.first(where: { $0.id == key1 }) else {
+                    continue
+                }
+
+                adventureRecs.append(wine1)
+
+                var wine2: Wine?
+                var attempts = 0
+                while wine2 == nil && attempts < 10 {
+                    if let newKey = adventureCategoryRecs.randomElement()?.key,
+                       newKey != key1,
+                       let newWine = wineDataInfo.wines.first(where: { $0.id == newKey }) {
+                        wine2 = newWine
+                    }
+                    attempts += 1
+                }
+
+                if let wine2 = wine2 {
+                    adventureRecs.append(wine2)
+                } else {
+                }
+
+            } else {
+                if let key = adventureCategoryRecs.randomElement()?.key,
+                   let wine = wineDataInfo.wines.first(where: { $0.id == key }) {
+                    adventureRecs.append(wine)
+                } else {
+                }
+            }
+        }
+
+        print("\n✅ Final Adventure Recs:")
+        for rec in adventureRecs {
+            print("- \(rec.nameOnMenu) (\(rec.category))")
+        }
+        return adventureRecs
+    }
+
+    
+    func adventureRecsRestaurants() {
+        let adventureRecs = adventureRecs()
+        var restaurantMapping: [String: [String: Double]] = [:]
+
+        for wine in adventureRecs {
+            let matchingWines = wineDataInfo.wines.filter { $0.id == wine.id }
+            for match in matchingWines {
+                restaurantMapping[wine.id, default: [:]][match.restaurant] = match.glassPrice
+            }
+        }
+        print("adventure recs resturaunt mapping")
+        print(restaurantMapping)
     }
 }
