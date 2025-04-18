@@ -196,7 +196,8 @@ struct SwipeView: View {
         viewModel.whiteWineSets > 0 ||
         viewModel.sparklingWineSets > 0 ||
         viewModel.dessertWineNum > 0 ||
-        viewModel.roseWineNum > 0
+        viewModel.roseWineNum > 0 ||
+        viewModel.fortifiedWineNum > 0
     }
 }
 
