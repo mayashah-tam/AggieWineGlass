@@ -8,6 +8,7 @@
 \usepackage{booktabs}
 
 \usepackage{lineno}
+\usepackage{amsmath}
 
 \definecolor{darkblue}{rgb}{0, 0, 0.5}
 \hypersetup{colorlinks=true, citecolor=darkblue, linkcolor=darkblue, urlcolor=darkblue}
@@ -81,6 +82,57 @@ Not every wine has a complete profile on Vivino. This meant that even after runn
 There are a few key drawbacks with our approach. The first involves the data being scraped from Vivino. Initially, we were also getting price from a separate pricing API, but due to issues with Vivino's currency (occasionally returning in other currencies like TWD with no clear conversion to the USD amount), we scrape these from the HTML as well. However, because the most accurate price data comes from the pricing API, the bottle prices we found are not always exact or even matched what Vivino had listed. In addition, even for the data that we scraped accurately every time, Vivino itself is not an objective source. Many users have complained about biased ratings on the site, and the tasting profiles listed are based on users reviews, which can be inaccurate. Also, Vivino's backend can change drastically between wines, making it hard or impossible to accurately scrape the same type of data from different wines.
 
 Another issue with this method is that menus change. Especially in regards to wine selection, restaurants will often change what they are offering based on what is available, and rotate through these rather quickly. However, both of these issues could be resolved if we were to continue working on this project by allowing restaurants that want to participate to input their own data. With something like a restaurant account, every restaurant could put its wines in and make sure their profiles are accurate. However, due to the scope of this project, scraping Vivino and using currently available menus was the best approach. The above is just an example of future work that could be done to mitigate some of these issues.
+
+\section{Recommendation Algorithm}
+
+After getting the data, the next step in the development of Aggie Wine Glass was to develop the ranking and similarity assessment algorithm that would allow for user preference inputs to be utilized in the development of a final recommendation list of wines. 
+
+\subsection{Obtaining User Input}
+The initial stage in developing the algorithm required getting a basline on user preferences as it related to different wine characteristics. Through the data collection, knowledge learned in Texas A\&M's HORT 416 Understanding Wine -- - From Vines to Wines and Beyond Course, and a little bit of external reseearch, it was deternined that there were various characteristics that we could gather user input on.
+
+Our dataset identified six different categories of wines -- Red, White, Sparkling, Rose, Dessert, and Fortified. Therefore, the first characteristic for which user input is desired is on the selection of wine categories for which the user interested in recieving recommendations.  
+
+Next comes the input of user ratings on scalar attributes relating to the taste of the wine. Users are presnted with five different scalar attributes -- Dry/Sweet, Tannin, Soft/Acidic, Light/Bold, and Fizziness. Users are asked to rate their preferences for the first four attributes on a scale of 1 - 5 and on a scale of 0 - 5 for the last attribute. These scalar values will be used later to calculate a weighted cosine similarity assessment between user preferences and our collection of wines.
+
+Through the collection of information on the wines in our dataset, we were able to determine that each of the wines falls into one of the four following region categories -- Texas, US Non-Texas, New World (Australia/Asia), and Old World (Europe). Users then provide input on what regions of the world they would like their wines to be originating from. 
+
+Now, we move onto our categorical data components. Users select the flavor profiles that they feel align the best with their wine flavor interests. On the back-end, our wine object model had two different attributes, one for flavor profiles and one for profile specifics. There is also a mapping different profile specifics and their assoicated flavor profile. As a result, once a user selects all their desired flavor profiles, their associated flavor profiles are set to a numerical baseline score of 3.0, and all profile specifics are set to a numerical baseline score of 1.0. These numerical baseline values are further adjusted during the fine-tuning process and first buffered and then used in order to calculate a weighted jaccard similiarity based on the user's flavor preferences. 
+
+The last piece of categorical data that the user is able to provide preference input on is the optional food pairings section. If desired, users are able to select the type of foods that they are interested in pairing their wine with. As a result, the back-end would populated the desired food pairtings with a numerical baseline score of 1.0 and later calculate a jaccard similairty score between the wines in our database and the user input preferences. 
+
+Lastly, the user selects the less of personalization they desire. They can select eitther less or more, and this determines the amount of fine-tuning that is applied to the user's basline preferences.
+
+\subsection{Fine-Tuning}
+The purpose of fine-tuning is to be able to provide a more accurate estimate of what the user really likes. A hard filter is applied to the dataset based on the selected categories and regions. Then, users are presented with anoymous wine's for which they are provided the following information: 
+category type, all 5 scalar attributes, and 3 of the 5 profile specifics associated with the given wine. Users then have the ability to "like" or "dislike" the wine.
+
+These anonymous wine profiles are generated in "mini-sets". The number of mini-sets are set based on the level of personalization that the user selected, and the number of wine categories that the user selected. We wanted to be sure to give the user enough cards to get a more accurate assessment of their wine preferences, but not too many cards to where they lost interest.
+
+The mini-sets are comprised in two different ways. For the categories of rose, dessert, and fortified wines, we only have 21, 12, and 12 wines respectively. As a result, each mini-set is composed soley of one wine in the category that is picked at random. However, for the categories of red, white, and sparkling, for wine we have substantially larger numbers of wines, each mini-set contains 3 anonymous wine profiles. The first wine is selected based on the user's taste preferences. A weighted cosine similarity score is calculated on the 5 scalar attributes. A wine is then picked from random from the top 20 most similar wines. A similar process takes place for the second wine. However, this wine is selected based on the user's flavor preferences. As a result, a weighted jaccard similarity score is calculated against the wines in the database and one is selected from the top 20 scores. Lastly, the third wine is simply picked at random from those that match in category. 
+
+After each set is generated, the user "likes" or "dislikes" the given wines. Then, based on the resulting user information about these anonymous wine profiles, their baseline preferences are fine-tuned. For every wine that the user likes, the associated flavor profile score are increased by 1.0 and the scores of the 3 presented flavor specifics are increased by 0.25. If the user disliked the wine, flavor profile scores are decreassed by 1.0 and the 3 presented flavor specifics scores are decreased by 0.25. For all liked wines, their scalar attributes are averaged and the recomputed with the current baseline values to create a new weighted average between the two measures that replaced the current baseline. 
+
+The next x iterations of mini-sets that the user is presented with is calcualted based on the fine-tuning updates of the previous mini-set. This ensures that each mini-set is further enhancing the accuracy of our information on user preferences, rather than all being selected on the initial baseline.
+
+After the user has been presented with all the minisets, and has "liked" or "disliked" all given anonymous wine profiles, the final similarity recommendation can be conducted. 
+
+\subsection{Similarity Assessment}
+The final similarity assessment was calculated by adding various similairty scores together. First, however; there was a hard filter applied to the total databased that included user categories, regions, and buffered scalar taste attributes. This provided the filtered list on which  similarity scores were calculated. First a weighted cosine score was calculated. The weights 0.20, 0.20, 0.30, 0.20, 0.10 mapped to Dry/Sweet, Tannin, Soft/Acidic, Light/Bold, Fizziness respectively. This scores were mapped to their wine's id and stored. Next, a weighted jaccard similarity was calculated on both the flavor profiles and flavor specifics of each wine and the scores of matching user preferences. Both these scores were stored and mapped to the associated wine id, very similar to the weighted cosine calculation. The user rating for the wine that was scraped from Vivno is also taken into consideration. If food pairing were selected, a jaccard similarity score was also calculated and mapped to the respective wine id. Thus the similarity assessment algorithms are as follows. Equation (5) is used when the user does not select the option to pair and equation (6) is used when the user does decide to pair.
+\begin{align}
+taste &= weightedCosineScore \\
+flavorProfiles &= weightedJaccardScore \\
+profileSpecifics &= weightedJaccardScore \\
+foodPairings &= jaccardScore \\
+ranking &= (taste * 0.25) + (flavorProfiles * 0.25) + {} \notag \\
+         &\quad (profileSpecifics * 0.25) + (vivinoRating * 0.25) \\
+ranking &= (taste * 0.20) + (flavorProfiles * 0.20) + {} \notag \\
+         &\quad (profileSpecifics * 0.20) + (vivinoRating * 0.20) + {} \notag \\
+         &\quad (foodPairings * 0.20)
+\end{align}
+
+The resulting similairty scores are on a scale of 0 - 1, with 0 being the least similar and 1 being the most similar. At this point, a top recommendation is pulled from each category the user selected. The top wine is either selected at random from any wine with a similarity score >= 0.90, or if none of the scores are >= 0.90, it is pulled at random from the top 10\% of the highest scoring similar wines. For red and white, since we have such a large number of those categories in our dataset, the user is presented with two top recommendations, while the remains categories present one top recommendation. The user is also presented with another section of "adventurous recommendations". These wines either have a simialrity score >= 0.70 and <0.90 or are pulled from between the top 10\% and the top 20\% of similarity scores. This wines don't align as highly with the user preferences, but are still likely to wines that align with user preferences and encourage them to branch out. 
+
+This completes the recommendation algorithm process for providing users with wines that align with their preferences.
 
 \section{Submission of conference papers to COLM 2025}
 
