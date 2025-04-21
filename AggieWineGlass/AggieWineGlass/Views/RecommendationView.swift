@@ -12,7 +12,10 @@ struct RecommendationView: View {
     @EnvironmentObject var wineDataInfo: WineDataInfo
 
     @StateObject private var viewModel: RecommendationViewModel
-    @State private var recommendedWines: [Wine] = []
+    @State private var topWines: [Wine] = []
+    @State private var topRest: [String: [String: Double]] = [:]
+    @State private var advWines: [Wine] = []
+    @State private var advRest: [String: [String: Double]] = [:]
     @State private var expandedWineID: String?
 
     init(path: Binding<NavigationPath>, preferences: UserPreferences, wineDataInfo: WineDataInfo) {
@@ -33,9 +36,25 @@ struct RecommendationView: View {
                 SectionTitleView(text: "Our Recommendation")
 
                 ScrollView {
+                    Text("Top Recommendations")
+                        .font(.custom("Oswald-Regular", size: 24))
+                        .foregroundColor(.white)
+                        .padding(.bottom, 5)
                     VStack(spacing: 12) {
-                        ForEach(Array(recommendedWines.enumerated()), id: \.element.id) { index, wine in
-                            WineCardView(wine: wine, index: index, expandedWineID: $expandedWineID)
+                        ForEach(Array(topWines.enumerated()), id: \.element.id) { index, wine in
+                            WineCardView(wine: wine, index: index, expandedWineID: $expandedWineID, restaurants: topRest[wine.id]!)
+                        }
+                    }
+                    .padding(.top, 10)
+                    .padding(.bottom, 20)
+                    
+                    Text("Adventurous Recommendations")
+                        .font(.custom("Oswald-Regular", size: 24))
+                        .foregroundColor(.white)
+                        .padding(.bottom, 5)
+                    VStack(spacing: 12) {
+                        ForEach(Array(advWines.enumerated()), id: \.element.id) { index, wine in
+                            WineCardView(wine: wine, index: index, expandedWineID: $expandedWineID, restaurants: advRest[wine.id]!)
                         }
                     }
                     .padding(.top, 10)
@@ -61,17 +80,22 @@ struct RecommendationView: View {
             .padding(.horizontal)
         }
         .onAppear {
-            recommendedWines = viewModel.finalRecommendations()
+            topWines = viewModel.finalRecommendations()
+            topRest = viewModel.topRecsRestaurants(topRecs: topWines)
+            advWines = viewModel.adventureRecs()
+            advRest = viewModel.adventureRecsRestaurants(advRecs: advWines)
         }
         .navigationBarBackButtonHidden(true)
     }
 }
+
 struct WineCardView: View {
     @EnvironmentObject var preferences: UserPreferences
     
     let wine: Wine
     let index: Int
     @Binding var expandedWineID: String?
+    let restaurants: [String: Double]
 
     var isExpanded: Bool {
         expandedWineID == wine.id
@@ -115,13 +139,15 @@ struct WineCardView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity, alignment: .center)
 
-                        HStack {
-                            Text(wine.restaurant)
-                            Spacer()
-                            Text("$\(String(format: "%.2f", wine.glassPrice)) / glass")
+                        ForEach(restaurants.keys.sorted(), id: \.self) { rest in
+                            HStack {
+                                Text(rest)
+                                Spacer()
+                                Text("$\(String(format: "%.2f", restaurants[rest]!)) / glass")
+                            }
+                            .font(.subheadline)
+                            .foregroundColor(.white)
                         }
-                        .font(.subheadline)
-                        .foregroundColor(.white)
 
                         // MARK: - Info
                         Text("Wine Information")

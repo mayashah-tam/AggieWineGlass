@@ -206,7 +206,7 @@ class RecommendationViewModel: ObservableObject {
         var topRecs: [Wine] = []
 
         for category in preferences.categories {
-            var sortedWineScores = recommendationRanking(category: category, version: true)
+            let sortedWineScores = recommendationRanking(category: category, version: true)
             guard !sortedWineScores.isEmpty else {
                 continue
             }
@@ -251,13 +251,12 @@ class RecommendationViewModel: ObservableObject {
         }
         print("\n✅ Final Top Recs:")
         for rec in topRecs {
-            print("- \(rec.nameOnMenu) (\(rec.category))")
+            print("- \(rec.nameOnMenu) (\(rec.id))")
         }
         return topRecs
     }
 
-    func topRecsRestaurants() {
-        let topRecs = finalRecommendations()
+    func topRecsRestaurants(topRecs: [Wine]) -> [String: [String: Double]]{
         var restaurantMapping: [String: [String: Double]] = [:]
 
         for wine in topRecs {
@@ -266,6 +265,9 @@ class RecommendationViewModel: ObservableObject {
                 restaurantMapping[wine.id, default: [:]][match.restaurant] = match.glassPrice
             }
         }
+        
+        print(restaurantMapping)
+        return restaurantMapping
     }
     
     func adventureRecs() -> [Wine] {
@@ -332,17 +334,16 @@ class RecommendationViewModel: ObservableObject {
         return adventureRecs
     }
 
-    func adventureRecsRestaurants() {
-        let adventureRecs = adventureRecs()
+    func adventureRecsRestaurants(advRecs: [Wine]) -> [String: [String: Double]] {
         var restaurantMapping: [String: [String: Double]] = [:]
 
-        for wine in adventureRecs {
+        for wine in advRecs {
             let matchingWines = wineDataInfo.wines.filter { $0.id == wine.id }
             for match in matchingWines {
                 restaurantMapping[wine.id, default: [:]][match.restaurant] = match.glassPrice
             }
         }
-        print("adventure recs resturaunt mapping")
-        print(restaurantMapping)
+        
+        return restaurantMapping
     }
 }
