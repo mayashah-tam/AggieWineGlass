@@ -8,18 +8,19 @@
 import SwiftUI
 
 struct SliderScalesView: View {
+    @Binding var path: NavigationPath
     @EnvironmentObject var preferences: UserPreferences
     @EnvironmentObject var wineDataInfo: WineDataInfo
 
     @StateObject private var viewModel: SliderScalesViewModel
-    @State private var showRegionSelection = false
 
-    init(preferences: UserPreferences) {
+    init(path: Binding<NavigationPath>, preferences: UserPreferences) {
         _viewModel = StateObject(wrappedValue:
             SliderScalesViewModel(
                 preferences: preferences
             )
         )
+        self._path = path
     }
 
     var body: some View {
@@ -71,7 +72,9 @@ struct SliderScalesView: View {
                 Spacer()
 
                 Button(action: {
-                    showRegionSelection = true
+                    withAnimation {
+                        path.append(Route.regionSelection)
+                    }
                 }) {
                     Text("Next")
                         .font(.custom("Oswald-Regular", size: 18))
@@ -90,12 +93,6 @@ struct SliderScalesView: View {
             viewModel.updateSoftAcidityScale()
             viewModel.updateLightBoldScale()
             viewModel.updateFizzinessScale()
-        }
-        .navigationDestination(isPresented: $showRegionSelection) {
-            RegionSelectionView(
-                preferences: preferences,
-                wineDataInfo: wineDataInfo
-            )
         }
     }
 }

@@ -256,7 +256,6 @@ class RecommendationViewModel: ObservableObject {
         return topRecs
     }
 
-    
     func topRecsRestaurants() {
         let topRecs = finalRecommendations()
         var restaurantMapping: [String: [String: Double]] = [:]
@@ -333,7 +332,6 @@ class RecommendationViewModel: ObservableObject {
         return adventureRecs
     }
 
-    
     func adventureRecsRestaurants() {
         let adventureRecs = adventureRecs()
         var restaurantMapping: [String: [String: Double]] = [:]

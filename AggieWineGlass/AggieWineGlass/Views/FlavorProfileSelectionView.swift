@@ -4,19 +4,19 @@
 //
 //  Created by Maya Shah on 4/9/25.
 //
-
 import SwiftUI
 
 struct FlavorProfileSelectionView: View {
+    @Binding var path: NavigationPath
     @EnvironmentObject var preferences: UserPreferences
     @EnvironmentObject var wineDataInfo: WineDataInfo
 
     @StateObject private var viewModel: FlavorProfileSelectionViewModel
-    @State private var showPairingsSelection = false
     @State private var showAlert = false
 
-    init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
-        _viewModel = StateObject(wrappedValue:
+    init(path: Binding<NavigationPath>, preferences: UserPreferences, wineDataInfo: WineDataInfo) {
+        self._path = path
+        self._viewModel = StateObject(wrappedValue:
             FlavorProfileSelectionViewModel(
                 preferences: preferences,
                 wineDataInfo: wineDataInfo
@@ -36,7 +36,6 @@ struct FlavorProfileSelectionView: View {
 
             VStack(spacing: 20) {
                 SectionTitleView(text: "Select Flavor Profiles")
-                
                 Spacer()
 
                 if wineDataInfo.uniqueFlavorProfiles.isEmpty {
@@ -106,7 +105,7 @@ struct FlavorProfileSelectionView: View {
                     }
                 }
                 .padding(.top, 10)
-                
+
                 Spacer()
 
                 Button(action: {
@@ -114,7 +113,9 @@ struct FlavorProfileSelectionView: View {
                     if preferences.flavorSpecifics.isEmpty {
                         showAlert = true
                     } else {
-                        showPairingsSelection = true
+                        withAnimation {
+                            path.append(Route.pairingsSelection)
+                        }
                     }
                 }) {
                     Text("Next")
@@ -125,20 +126,16 @@ struct FlavorProfileSelectionView: View {
                         .background(Color.white)
                         .cornerRadius(12)
                 }
-                .padding(.top, 20)
                 .alert("Please select at least one flavor profile", isPresented: $showAlert) {
                     Button("OK", role: .cancel) { }
                 }
+                .padding(.top, 20)
             }
+            .padding()
         }
         .onAppear {
             print("Unique Flavor Profiles: \(wineDataInfo.uniqueFlavorProfiles)")
         }
-        .navigationDestination(isPresented: $showPairingsSelection) {
-            PairingsSelectionView(
-                preferences: preferences,
-                wineDataInfo: wineDataInfo
-            )
-        }
     }
 }
+

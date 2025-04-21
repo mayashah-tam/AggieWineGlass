@@ -7,16 +7,17 @@
 import SwiftUI
 
 struct RecommendationView: View {
+    @Binding var path: NavigationPath
     @EnvironmentObject var preferences: UserPreferences
     @EnvironmentObject var wineDataInfo: WineDataInfo
 
-    @StateObject var viewModel: RecommendationViewModel
-
+    @StateObject private var viewModel: RecommendationViewModel
     @State private var recommendedWines: [Wine] = []
     @State private var expandedWineID: String?
 
-    init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
-        _viewModel = StateObject(wrappedValue:
+    init(path: Binding<NavigationPath>, preferences: UserPreferences, wineDataInfo: WineDataInfo) {
+        self._path = path
+        self._viewModel = StateObject(wrappedValue:
             RecommendationViewModel(
                 preferences: preferences,
                 wineDataInfo: wineDataInfo
@@ -28,10 +29,8 @@ struct RecommendationView: View {
         ZStack {
             Color("PrimaryColor").ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 15) {
                 SectionTitleView(text: "Our Recommendation")
-
-                Spacer()
 
                 ScrollView {
                     VStack(spacing: 12) {
@@ -41,7 +40,25 @@ struct RecommendationView: View {
                     }
                     .padding(.top, 10)
                 }
+                .frame(maxHeight: .infinity)
+                .layoutPriority(1)
+
+                Button(action: {
+                    preferences.reset()
+                    path.removeLast(path.count)
+                }) {
+                    Text("Start Over")
+                        .font(.custom("Oswald-Regular", size: 18))
+                        .foregroundColor(Color("PrimaryColor"))
+                        .padding(.horizontal, 30)
+                        .padding(.vertical, 12)
+                        .background(Color.white)
+                        .cornerRadius(12)
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.top, 20)
             }
+            .padding(.horizontal)
         }
         .onAppear {
             recommendedWines = viewModel.finalRecommendations()
@@ -49,7 +66,6 @@ struct RecommendationView: View {
         .navigationBarBackButtonHidden(true)
     }
 }
-
 struct WineCardView: View {
     @EnvironmentObject var preferences: UserPreferences
     

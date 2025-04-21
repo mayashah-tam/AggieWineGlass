@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SwipeView: View {
     // MARK: Environment Variables
+    @Binding var path: NavigationPath
     @EnvironmentObject var preferences: UserPreferences
     @EnvironmentObject var wineDataInfo: WineDataInfo
     
@@ -22,9 +23,6 @@ struct SwipeView: View {
     @State private var selectedProfileSet: [[String]] = []
     @State private var isLoading = false
     @State private var isSwipeReady = false
-    
-    // MARK: Variable for Navigation
-    @State private var showRecommendationView = false
     
     // MARK: Wine puns (Loading)
     @State private var loadingPun: String = ""
@@ -42,9 +40,10 @@ struct SwipeView: View {
 
     @StateObject var viewModel: SwipeViewModel
     
-    init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
-        _viewModel = StateObject(wrappedValue:
-            SwipeViewModel (
+    init(path: Binding<NavigationPath>, preferences: UserPreferences, wineDataInfo: WineDataInfo) {
+        self._path = path
+        self._viewModel = StateObject(wrappedValue:
+            SwipeViewModel(
                 preferences: preferences,
                 wineDataInfo: wineDataInfo
             )
@@ -127,9 +126,6 @@ struct SwipeView: View {
                 }
             }
         }
-        .navigationDestination(isPresented: $showRecommendationView) {
-            RecommendationView(preferences: preferences, wineDataInfo: wineDataInfo)
-        }
     }
 
     func startSwipeLoop() {
@@ -185,7 +181,9 @@ struct SwipeView: View {
         )
 
         if !setsRemaining() {
-            showRecommendationView = true
+            withAnimation {
+                path.append(Route.recommendation)
+            }
         } else {
             loadNextSet()
         }

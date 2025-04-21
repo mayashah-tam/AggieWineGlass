@@ -54,5 +54,22 @@ class UserPreferences: ObservableObject {
         self.regionClasses = regionClasses
         self.highPersonalization = highPersonalization
     }
+    
+    func reset() {
+        drySweetScale = 3.0
+        tanninScale = 3.0
+        softAcidityScale = 3.0
+        lightBoldScale = 3.0
+        fizzinessScale = 0.0
+        categories.removeAll()
+        flavorProfiles.removeAll()
+        flavorSpecifics.removeAll()
+        flavorProfilesNum.removeAll()
+        flavorSpecificsNum.removeAll()
+        isPairing = false
+        pairings.removeAll()
+        regionClasses.removeAll()
+        highPersonalization = false
+    }
 }
 

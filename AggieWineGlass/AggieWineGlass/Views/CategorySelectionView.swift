@@ -8,20 +8,21 @@
 import SwiftUI
 
 struct CategorySelectionView: View {
+    @Binding var path: NavigationPath
     @EnvironmentObject var preferences: UserPreferences
     @EnvironmentObject var wineDataInfo: WineDataInfo
     @State private var showAlert = false
 
     @StateObject private var viewModel: CategorySelectionViewModel
-    @State private var showSliderScales = false
 
-    init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
+    init(path: Binding<NavigationPath>, preferences: UserPreferences, wineDataInfo: WineDataInfo) {
         _viewModel = StateObject(wrappedValue:
             CategorySelectionViewModel(
                 preferences: preferences,
                 wineDataInfo: wineDataInfo
             )
         )
+        self._path = path
     }
 
     var body: some View {
@@ -104,7 +105,9 @@ struct CategorySelectionView: View {
                         if preferences.categories.isEmpty {
                             showAlert = true
                         } else {
-                            showSliderScales = true
+                            withAnimation {
+                                path.append(Route.sliderScales)
+                            }
                         }
                     }) {
                         Text("Next")
@@ -125,9 +128,6 @@ struct CategorySelectionView: View {
         }
         .onAppear {
             print("Unique Categories: \(wineDataInfo.uniqueCategories)")
-        }
-        .navigationDestination(isPresented: $showSliderScales) {
-            SliderScalesView(preferences: preferences)
         }
     }
 }

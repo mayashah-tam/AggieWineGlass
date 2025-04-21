@@ -1,15 +1,16 @@
 import SwiftUI
 
 struct RegionSelectionView: View {
+    @Binding var path: NavigationPath
     @EnvironmentObject var preferences: UserPreferences
     @EnvironmentObject var wineDataInfo: WineDataInfo
 
     @StateObject private var viewModel: RegionSelectionViewModel
-    @State private var showFlavorProfileSelection = false
     @State private var showAlert = false
 
-    init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
-        _viewModel = StateObject(wrappedValue:
+    init(path: Binding<NavigationPath>, preferences: UserPreferences, wineDataInfo: WineDataInfo) {
+        self._path = path
+        self._viewModel = StateObject(wrappedValue:
             RegionSelectionViewModel(
                 preferences: preferences,
                 wineDataInfo: wineDataInfo
@@ -28,8 +29,6 @@ struct RegionSelectionView: View {
 
             VStack(spacing: 20) {
                 SectionTitleView(text: "Select Regions")
-                
-                Spacer()
                 Spacer()
 
                 if wineDataInfo.uniqueRegionClasses.isEmpty {
@@ -95,15 +94,16 @@ struct RegionSelectionView: View {
                         }
                     }
                     .padding(.top, 10)
-                    
-                    Spacer()
+
                     Spacer()
 
                     Button(action: {
                         if preferences.regionClasses.isEmpty {
                             showAlert = true
                         } else {
-                            showFlavorProfileSelection = true
+                            withAnimation {
+                                path.append(Route.flavorProfileSelection)
+                            }
                         }
                     }) {
                         Text("Next")
@@ -114,10 +114,10 @@ struct RegionSelectionView: View {
                             .background(Color.white)
                             .cornerRadius(12)
                     }
-                    .padding(.top, 20)
                     .alert("Please select at least one region", isPresented: $showAlert) {
                         Button("OK", role: .cancel) { }
                     }
+                    .padding(.top, 20)
                 }
             }
             .padding()
@@ -125,12 +125,8 @@ struct RegionSelectionView: View {
         .onAppear {
             print("Unique Regions: \(wineDataInfo.uniqueRegionClasses)")
         }
-        .navigationDestination(isPresented: $showFlavorProfileSelection) {
-            FlavorProfileSelectionView(
-                preferences: preferences,
-                wineDataInfo: wineDataInfo
-            )
-        }
     }
 }
+
+
 

@@ -15,37 +15,109 @@
 //  The Preview Content is there so we can see the previews
 //  The Assests file is how we define colors, pictures, logos etc. to be used in the app
 
-
-
 import SwiftUI
 
 @main
 struct AggieWineGlassApp: App {
     @StateObject private var preferences = UserPreferences()
     @StateObject private var wineDataInfo = WineDataInfo()
-    
-    private var wineViewModel: WineViewModel
-    
+    @State private var path = NavigationPath()
+
+    private let wineViewModel: WineViewModel
+
     init() {
         let wineInfo = WineDataInfo()
         self._wineDataInfo = StateObject(wrappedValue: wineInfo)
         self.wineViewModel = WineViewModel(wineDataInfo: wineInfo)
-        
+
         if let filePath = Bundle.main.path(forResource: "WineListData", ofType: "csv") {
             wineViewModel.loadWineData(filepath: filePath)
         } else {
             print("❌ WineListData.csv not found in bundle.")
         }
     }
-    
+
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                TitleView()
+            NavigationStack(path: $path) {
+                TitleView(path: $path)
+                    .navigationDestination(for: Route.self) { route in
+                        switch route {
+                        case .title:
+                            TitleView(path: $path)
+
+                        case .categorySelection:
+                            CategorySelectionView(
+                                path: $path,
+                                preferences: preferences,
+                                wineDataInfo: wineDataInfo
+                            )
+
+                        case .sliderScales:
+                            SliderScalesView(
+                                path: $path,
+                                preferences: preferences
+                            )
+
+                        case .regionSelection:
+                            RegionSelectionView(
+                                path: $path,
+                                preferences: preferences,
+                                wineDataInfo: wineDataInfo
+                            )
+
+                        case .flavorProfileSelection:
+                            FlavorProfileSelectionView(
+                                path: $path,
+                                preferences: preferences,
+                                wineDataInfo: wineDataInfo
+                            )
+
+                        case .pairingsSelection:
+                            PairingsSelectionView(
+                                path: $path,
+                                preferences: preferences,
+                                wineDataInfo: wineDataInfo
+                            )
+
+                        case .personalizationSelection:
+                            PersonalizationSelectionView(
+                                path: $path,
+                                preferences: preferences
+                            )
+
+                        case .swipe:
+                            SwipeView(
+                                path: $path,
+                                preferences: preferences,
+                                wineDataInfo: wineDataInfo
+                            )
+
+                        case .recommendation:
+                            RecommendationView(
+                                path: $path,
+                                preferences: preferences,
+                                wineDataInfo: wineDataInfo
+                            )
+                        }
+                    }
             }
-            .accentColor(.white)
             .environmentObject(preferences)
             .environmentObject(wineDataInfo)
+            .accentColor(.white)
         }
     }
+}
+
+// Define your navigation routes
+enum Route: Hashable {
+    case title
+    case categorySelection
+    case sliderScales
+    case regionSelection
+    case flavorProfileSelection
+    case pairingsSelection
+    case personalizationSelection
+    case swipe
+    case recommendation
 }

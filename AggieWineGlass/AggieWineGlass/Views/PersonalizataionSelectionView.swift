@@ -8,15 +8,16 @@
 import SwiftUI
 
 struct PersonalizationSelectionView: View {
+    @Binding var path: NavigationPath
     @EnvironmentObject var preferences: UserPreferences
     @EnvironmentObject var wineDataInfo: WineDataInfo
 
     @StateObject private var viewModel: PersonalizationSelectionViewModel
-    @State private var showSwipeView = false
-    @State private var personalizationSelection = "Less"
+    @State private var selection: String = "Less"
 
-    init(preferences: UserPreferences) {
-        _viewModel = StateObject(wrappedValue:
+    init(path: Binding<NavigationPath>, preferences: UserPreferences) {
+        self._path = path
+        self._viewModel = StateObject(wrappedValue:
             PersonalizationSelectionViewModel(
                 preferences: preferences
             )
@@ -25,18 +26,17 @@ struct PersonalizationSelectionView: View {
 
     var body: some View {
         ZStack {
-            Color("PrimaryColor")
-                .ignoresSafeArea()
+            Color("PrimaryColor").ignoresSafeArea()
 
             VStack(spacing: 20) {
                 SectionTitleView(text: "Personalization Level")
-                
+
                 Spacer()
 
                 HStack(spacing: 0) {
                     ForEach(["More", "Less"], id: \.self) { option in
                         Button(action: {
-                            personalizationSelection = option
+                            selection = option
                             if option == "More" {
                                 viewModel.turnOnMorePersonalization()
                             } else {
@@ -46,16 +46,16 @@ struct PersonalizationSelectionView: View {
                             Text(option)
                                 .font(.custom("Oswald-Regular", size: 16))
                                 .foregroundColor(
-                                    personalizationSelection == option
-                                    ? Color("PrimaryColor")
-                                    : .white
+                                    selection == option
+                                        ? Color("PrimaryColor")
+                                        : .white
                                 )
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 20)
                                 .background(
-                                    personalizationSelection == option
-                                    ? Color.white
-                                    : Color.clear
+                                    selection == option
+                                        ? Color.white
+                                        : Color.clear
                                 )
                         }
                     }
@@ -71,7 +71,9 @@ struct PersonalizationSelectionView: View {
                 Spacer()
 
                 Button(action: {
-                    showSwipeView = true
+                    withAnimation {
+                        path.append(Route.swipe)
+                    }
                 }) {
                     Text("Next")
                         .font(.custom("Oswald-Regular", size: 18))
@@ -85,9 +87,5 @@ struct PersonalizationSelectionView: View {
             }
             .padding()
         }
-        .navigationDestination(isPresented: $showSwipeView) {
-            SwipeView(preferences: preferences, wineDataInfo: wineDataInfo)
-        }
     }
 }
-

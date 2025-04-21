@@ -8,17 +8,18 @@
 import SwiftUI
 
 struct PairingsSelectionView: View {
+    @Binding var path: NavigationPath
     @EnvironmentObject var preferences: UserPreferences
     @EnvironmentObject var wineDataInfo: WineDataInfo
 
     @StateObject private var viewModel: PairingSelectionViewModel
     @State private var showPairings = false
-    @State private var showPersonalizationSelection = false
     @State private var selection: String = "No"
     @State private var showAlert = false
 
-    init(preferences: UserPreferences, wineDataInfo: WineDataInfo) {
-        _viewModel = StateObject(wrappedValue:
+    init(path: Binding<NavigationPath>, preferences: UserPreferences, wineDataInfo: WineDataInfo) {
+        self._path = path
+        self._viewModel = StateObject(wrappedValue:
             PairingSelectionViewModel(
                 preferences: preferences,
                 wineDataInfo: wineDataInfo
@@ -32,16 +33,14 @@ struct PairingsSelectionView: View {
             GridItem(.flexible()),
             GridItem(.flexible())
         ]
-        
+
         ZStack {
-            Color("PrimaryColor")
-                .ignoresSafeArea()
-            
+            Color("PrimaryColor").ignoresSafeArea()
+
             VStack(spacing: 20) {
                 SectionTitleView(text: "Select Food Pairings")
-                
                 Spacer()
-                
+
                 HStack(spacing: 0) {
                     ForEach(["Yes", "No"], id: \.self) { option in
                         Button(action: {
@@ -70,7 +69,7 @@ struct PairingsSelectionView: View {
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding(.horizontal)
-                
+
                 Group {
                     if showPairings {
                         if viewModel.uniqueFilteredPairings.isEmpty {
@@ -114,7 +113,7 @@ struct PairingsSelectionView: View {
                                 .padding(.top)
                             }
                             .frame(height: UIScreen.main.bounds.height * 0.415)
-                            
+
                             HStack(spacing: 16) {
                                 Button(action: {
                                     viewModel.selectAllPairings()
@@ -149,18 +148,21 @@ struct PairingsSelectionView: View {
                 }
 
                 Spacer()
-                
+
                 Button(action: {
-                    if (preferences.isPairing) {
+                    if preferences.isPairing {
                         if preferences.pairings.isEmpty {
                             showAlert = true
                         } else {
-                            showPersonalizationSelection = true
+                            withAnimation {
+                                path.append(Route.personalizationSelection)
+                            }
                         }
                     } else {
-                        showPersonalizationSelection = true
+                        withAnimation {
+                            path.append(Route.personalizationSelection)
+                        }
                     }
-                    
                 }) {
                     Text("Next")
                         .font(.custom("Oswald-Regular", size: 18))
@@ -176,9 +178,6 @@ struct PairingsSelectionView: View {
                 }
             }
             .padding()
-        }
-        .navigationDestination(isPresented: $showPersonalizationSelection) {
-            PersonalizationSelectionView(preferences: preferences)
         }
         .onAppear {
             print("Unique Pairings: \(wineDataInfo.uniquePairings)")

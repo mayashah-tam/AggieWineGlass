@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct TitleView: View {
+    @Binding var path: NavigationPath
     @EnvironmentObject var preferences: UserPreferences
     @EnvironmentObject var wineDataInfo: WineDataInfo
-
-    @State private var showCategorySelection = false
 
     var body: some View {
         NavigationStack {
@@ -38,7 +37,7 @@ struct TitleView: View {
 
                     Button(action: {
                         withAnimation {
-                            showCategorySelection = true
+                            path.append(Route.categorySelection)
                         }
                     }) {
                         Text("Start")
@@ -53,13 +52,6 @@ struct TitleView: View {
                     .padding(.bottom, 80)
                 }
                 .padding()
-            }
-
-            .navigationDestination(isPresented: $showCategorySelection) {
-                CategorySelectionView(
-                    preferences: preferences,
-                    wineDataInfo: wineDataInfo
-                )
             }
         }
     }
