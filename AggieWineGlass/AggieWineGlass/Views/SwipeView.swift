@@ -75,14 +75,29 @@ struct SwipeView: View {
                     .shadow(radius: 10)
                     .navigationBarBackButtonHidden(true)
                 } else if isSwipeReady {
-                    SwipeableCardsView(wines: currentMiniSet) { swipedModels in
-                        swipeResults = swipedModels.map { $0.swipeDirection }
-                        selectedProfileSet = swipedModels.map { $0.selectedProfileSpecifics }
-                        isSwipeReady = false
-                        onMiniSetSwiped()
-                    }
-                    .transition(.opacity)
-                    .navigationBarBackButtonHidden(true)
+                    VStack {
+                        HStack(spacing: 16) {
+                            Image(systemName: "arrow.left")
+                                .font(.system(size: 28, weight: .bold))
+                            Text("Swipe")
+                                .font(.custom("Oswald-Regular", size: 28))
+                            Image(systemName: "arrow.right")
+                                .font(.system(size: 28, weight: .bold))
+                        }
+                        .foregroundColor(.white)
+                        .padding(.top, 20)
+
+                         Spacer()
+
+                         SwipeableCardsView(wines: currentMiniSet) { swipedModels in
+                             swipeResults = swipedModels.map { $0.swipeDirection }
+                             selectedProfileSet = swipedModels.map { $0.selectedProfileSpecifics }
+                             isSwipeReady = false
+                             onMiniSetSwiped()
+                         }
+                         .transition(.opacity)
+                         .navigationBarBackButtonHidden(true)
+                     }
                 }
             } else {
                 GeometryReader { geometry in
