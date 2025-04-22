@@ -47,7 +47,6 @@ class PairingSelectionViewModel: ObservableObject {
     
     func clearAllPairings() {
         preferences.pairings.removeAll()
-        preferences.isPairing = false
         print(preferences.pairings)
     }
 }

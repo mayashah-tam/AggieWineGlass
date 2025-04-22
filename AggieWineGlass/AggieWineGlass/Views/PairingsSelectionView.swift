@@ -51,6 +51,7 @@ struct PairingsSelectionView: View {
                                 showPairings = true
                             } else {
                                 showPairings = false
+                                preferences.isPairing = false
                                 viewModel.clearAllPairings()
                             }
                         }) {
